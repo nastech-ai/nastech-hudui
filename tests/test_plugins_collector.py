@@ -40,25 +40,25 @@ enabled: {str(enabled).lower()}
 provides_tools:
   - {name}_tool
 auth_required: true
-auth_command: hermes auth {name}
+auth_command: nastech auth {name}
 """.strip(),
         encoding="utf-8",
     )
 
 
 def test_collect_plugins_discovers_dashboard_and_agent_metadata(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
+    nastech_dir = tmp_path / "nastech"
     bundled_dir = tmp_path / "bundled"
     project_dir = tmp_path / "project"
 
-    _write_dashboard_plugin(hermes_dir / "plugins", "alpha", "Alpha")
-    _write_agent_plugin(hermes_dir / "plugins", "alpha", enabled=False)
+    _write_dashboard_plugin(nastech_dir / "plugins", "alpha", "Alpha")
+    _write_agent_plugin(nastech_dir / "plugins", "alpha", enabled=False)
     _write_dashboard_plugin(bundled_dir, "beta", "Beta")
     _write_agent_plugin(bundled_dir, "gamma")
-    _write_dashboard_plugin(project_dir / ".hermes" / "plugins", "delta", "Delta", hidden=True)
+    _write_dashboard_plugin(project_dir / ".nastech" / "plugins", "delta", "Delta", hidden=True)
 
     state = collect_plugins(
-        hermes_dir=str(hermes_dir),
+        nastech_dir=str(nastech_dir),
         bundled_plugins_dir=str(bundled_dir),
         project_dir=str(project_dir),
         include_project_plugins=True,
@@ -76,21 +76,21 @@ def test_collect_plugins_discovers_dashboard_and_agent_metadata(tmp_path: Path) 
     assert by_name["alpha"].has_api is True
     assert by_name["alpha"].provides_tools == ["alpha_tool"]
     assert by_name["alpha"].auth_required is True
-    assert by_name["alpha"].auth_command == "hermes auth alpha"
+    assert by_name["alpha"].auth_command == "nastech auth alpha"
     assert by_name["beta"].source == "bundled"
     assert by_name["gamma"].has_dashboard_manifest is False
     assert by_name["delta"].user_hidden is True
 
 
 def test_collect_plugins_prefers_user_plugin_over_bundled_duplicate(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
+    nastech_dir = tmp_path / "nastech"
     bundled_dir = tmp_path / "bundled"
 
-    _write_dashboard_plugin(hermes_dir / "plugins", "same", "User Same")
+    _write_dashboard_plugin(nastech_dir / "plugins", "same", "User Same")
     _write_dashboard_plugin(bundled_dir, "same", "Bundled Same")
 
     state = collect_plugins(
-        hermes_dir=str(hermes_dir),
+        nastech_dir=str(nastech_dir),
         bundled_plugins_dir=str(bundled_dir),
     )
 
@@ -100,24 +100,24 @@ def test_collect_plugins_prefers_user_plugin_over_bundled_duplicate(tmp_path: Pa
 
 
 def test_set_plugin_enabled_updates_user_manifest(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    _write_agent_plugin(hermes_dir / "plugins", "alpha", enabled=False)
+    nastech_dir = tmp_path / "nastech"
+    _write_agent_plugin(nastech_dir / "plugins", "alpha", enabled=False)
 
-    result = set_plugin_enabled("alpha", True, hermes_dir=str(hermes_dir))
-    state = collect_plugins(hermes_dir=str(hermes_dir))
+    result = set_plugin_enabled("alpha", True, nastech_dir=str(nastech_dir))
+    state = collect_plugins(nastech_dir=str(nastech_dir))
 
     assert result["ok"] is True
     assert state.plugins[0].runtime_status == "enabled"
-    assert "enabled: true" in (hermes_dir / "plugins" / "alpha" / "plugin.yaml").read_text()
+    assert "enabled: true" in (nastech_dir / "plugins" / "alpha" / "plugin.yaml").read_text()
 
 
 def test_set_dashboard_plugin_hidden_updates_user_manifest(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    _write_dashboard_plugin(hermes_dir / "plugins", "alpha", "Alpha")
+    nastech_dir = tmp_path / "nastech"
+    _write_dashboard_plugin(nastech_dir / "plugins", "alpha", "Alpha")
 
-    result = set_dashboard_plugin_hidden("alpha", True, hermes_dir=str(hermes_dir))
+    result = set_dashboard_plugin_hidden("alpha", True, nastech_dir=str(nastech_dir))
     manifest = json.loads(
-        (hermes_dir / "plugins" / "alpha" / "dashboard" / "manifest.json").read_text()
+        (nastech_dir / "plugins" / "alpha" / "dashboard" / "manifest.json").read_text()
     )
 
     assert result["ok"] is True
@@ -125,7 +125,7 @@ def test_set_dashboard_plugin_hidden_updates_user_manifest(tmp_path: Path) -> No
 
 
 def test_install_plugin_clones_git_url_into_user_plugins(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
+    nastech_dir = tmp_path / "nastech"
     calls = []
 
     def fake_runner(cmd, **kwargs):
@@ -138,20 +138,20 @@ def test_install_plugin_clones_git_url_into_user_plugins(tmp_path: Path) -> None
 
     result = install_plugin(
         "https://github.com/example/my-plugin.git",
-        hermes_dir=str(hermes_dir),
+        nastech_dir=str(nastech_dir),
         runner=fake_runner,
     )
 
     assert result["ok"] is True
     assert calls[0][0][:2] == ["git", "clone"]
     assert calls[0][0][2] == "https://github.com/example/my-plugin.git"
-    assert calls[0][0][3] == str(hermes_dir / "plugins" / "my-plugin")
+    assert calls[0][0][3] == str(nastech_dir / "plugins" / "my-plugin")
 
 
 def test_update_plugin_pulls_user_git_plugin(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    _write_agent_plugin(hermes_dir / "plugins", "alpha")
-    (hermes_dir / "plugins" / "alpha" / ".git").mkdir()
+    nastech_dir = tmp_path / "nastech"
+    _write_agent_plugin(nastech_dir / "plugins", "alpha")
+    (nastech_dir / "plugins" / "alpha" / ".git").mkdir()
     calls = []
 
     def fake_runner(cmd, **kwargs):
@@ -162,8 +162,8 @@ def test_update_plugin_pulls_user_git_plugin(tmp_path: Path) -> None:
             stderr = ""
         return Result()
 
-    result = update_plugin("alpha", hermes_dir=str(hermes_dir), runner=fake_runner)
+    result = update_plugin("alpha", nastech_dir=str(nastech_dir), runner=fake_runner)
 
     assert result["ok"] is True
     assert calls[0][0] == ["git", "pull", "--ff-only"]
-    assert calls[0][1]["cwd"] == str(hermes_dir / "plugins" / "alpha")
+    assert calls[0][1]["cwd"] == str(nastech_dir / "plugins" / "alpha")

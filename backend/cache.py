@@ -1,4 +1,4 @@
-"""Intelligent caching for Hermes HUD collectors.
+"""Intelligent caching for NasTech HUD collectors.
 
 Caches expensive operations with automatic invalidation based on file mtimes.
 """
@@ -62,12 +62,12 @@ def cache_with_mtime(
         *dir_paths: Directories to monitor recursively
 
     Example:
-        @cache_with_mtime("~/.hermes/state.db", ttl=60)
-        def collect_sessions(hermes_dir: str) -> SessionsState:
+        @cache_with_mtime("~/.nastech/state.db", ttl=60)
+        def collect_sessions(nastech_dir: str) -> SessionsState:
             ...
 
-        @cache_with_mtime(dir_paths=("~/.hermes/skills",), ttl=300)
-        def collect_skills(hermes_dir: str) -> SkillsState:
+        @cache_with_mtime(dir_paths=("~/.nastech/skills",), ttl=300)
+        def collect_skills(nastech_dir: str) -> SkillsState:
             ...
     """
 
@@ -162,15 +162,15 @@ def get_cached_or_compute(
         ttl: Cache time-to-live in seconds
 
     Example:
-        def collect_sessions(hermes_dir: str) -> SessionsState:
-            db_path = Path(hermes_dir) / "state.db"
+        def collect_sessions(nastech_dir: str) -> SessionsState:
+            db_path = Path(nastech_dir) / "state.db"
 
             def _compute() -> SessionsState:
                 # ... expensive SQLite queries ...
                 return SessionsState(...)
 
             return get_cached_or_compute(
-                f"sessions:{hermes_dir}",
+                f"sessions:{nastech_dir}",
                 _compute,
                 file_paths=[db_path],
                 ttl=30

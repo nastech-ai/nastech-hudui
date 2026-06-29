@@ -243,7 +243,7 @@ async def check_diagnostics() -> dict[str, Any]:
         pass
 
     tmux_available = TmuxChatFallback.is_available()
-    tmux_pane = TmuxChatFallback.find_hermes_pane() if tmux_available else None
+    tmux_pane = TmuxChatFallback.find_nastech_pane() if tmux_available else None
 
     return {
         "available": cli_available,

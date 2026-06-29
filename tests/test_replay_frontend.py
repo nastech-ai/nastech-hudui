@@ -78,7 +78,7 @@ def test_replay_detail_has_share_card_preview() -> None:
     replay_panel = (ROOT / "frontend/src/components/ReplayPanel.tsx").read_text()
 
     assert "function ShareCardPreview" in replay_panel
-    assert "Hermes Replay" in replay_panel
+    assert "NasTech Replay" in replay_panel
     assert "Replay hash: {run.hashes.redacted_replay_hash || 'Pending'}" in replay_panel
     assert "<ShareCardPreview detail={detail} />" in replay_panel
 

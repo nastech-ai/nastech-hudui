@@ -65,12 +65,12 @@ def test_health_collects_readiness_freshness_and_feature_diagnostics(tmp_path: P
     monkeypatch.setattr("backend.collectors.health._check_pid_file", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_systemd_service", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_process", lambda *args, **kwargs: None)
-    monkeypatch.setattr("backend.collectors.health._hermes_cli_info", lambda: ("ok", "/usr/bin/hermes", "hermes 1.2.3"))
+    monkeypatch.setattr("backend.collectors.health._nastech_cli_info", lambda: ("ok", "/usr/bin/nastech", "nastech 1.2.3"))
 
     state = collect_health(str(tmp_path))
 
     readiness = _by_name(state.readiness)
-    assert readiness["Hermes Home"].status == "ok"
+    assert readiness["NasTech Home"].status == "ok"
     assert readiness["Config"].status == "ok"
     assert readiness["State Database"].status == "ok"
     assert readiness["Logs"].status == "ok"
@@ -90,7 +90,7 @@ def test_health_collects_readiness_freshness_and_feature_diagnostics(tmp_path: P
 
     features = _by_name(state.features)
     assert features["Chat"].status == "ok"
-    assert "Hermes CLI" in features["Chat"].depends_on
+    assert "NasTech CLI" in features["Chat"].depends_on
     assert features["Chat"].suggested_fix
     assert any(action.name == "Recheck" and action.kind == "refresh" for action in features["Chat"].actions)
     assert features["Sessions"].status == "ok"
@@ -100,9 +100,9 @@ def test_health_collects_readiness_freshness_and_feature_diagnostics(tmp_path: P
     assert any(action.name == "Restart gateway" and action.endpoint == "/api/gateway/restart" for action in features["Gateway"].actions)
     assert features["Plugins"].status == "ok"
 
-    assert state.hermes_cli_status == "ok"
-    assert state.hermes_cli_path == "/usr/bin/hermes"
-    assert state.hermes_cli_version == "hermes 1.2.3"
+    assert state.nastech_cli_status == "ok"
+    assert state.nastech_cli_path == "/usr/bin/nastech"
+    assert state.nastech_cli_version == "nastech 1.2.3"
     assert state.diagnostics_ok >= 1
     assert state.diagnostics_broken == 0
 
@@ -114,7 +114,7 @@ def test_health_reports_schema_drift_and_missing_inputs(tmp_path: Path, monkeypa
     monkeypatch.setattr("backend.collectors.health._check_pid_file", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_systemd_service", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_process", lambda *args, **kwargs: None)
-    monkeypatch.setattr("backend.collectors.health._hermes_cli_info", lambda: ("broken", "", "hermes CLI not found"))
+    monkeypatch.setattr("backend.collectors.health._nastech_cli_info", lambda: ("broken", "", "nastech CLI not found"))
 
     state = collect_health(str(tmp_path))
 
@@ -132,7 +132,7 @@ def test_health_reports_schema_drift_and_missing_inputs(tmp_path: Path, monkeypa
     assert any(action.name == "Open Chat" and action.target == "chat" for action in features["Chat"].actions)
     assert features["Model Analytics"].status == "ok"
 
-    assert state.hermes_cli_status == "broken"
+    assert state.nastech_cli_status == "broken"
     assert state.diagnostics_broken >= 1
 
 
@@ -142,7 +142,7 @@ def test_health_diagnostics_are_sorted_by_severity(tmp_path: Path, monkeypatch) 
     monkeypatch.setattr("backend.collectors.health._check_pid_file", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_systemd_service", lambda *args, **kwargs: None)
     monkeypatch.setattr("backend.collectors.health._check_process", lambda *args, **kwargs: None)
-    monkeypatch.setattr("backend.collectors.health._hermes_cli_info", lambda: ("broken", "", "hermes CLI not found"))
+    monkeypatch.setattr("backend.collectors.health._nastech_cli_info", lambda: ("broken", "", "nastech CLI not found"))
 
     state = collect_health(str(tmp_path))
 

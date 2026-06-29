@@ -5,8 +5,8 @@ from backend.cache import clear_cache
 from backend.collectors.providers import collect_providers
 
 
-def _write_config(hermes_dir: Path, provider: str, model: str) -> None:
-    (hermes_dir / "config.yaml").write_text(
+def _write_config(nastech_dir: Path, provider: str, model: str) -> None:
+    (nastech_dir / "config.yaml").write_text(
         f"model:\n  provider: {provider}\n  default: {model}\n",
         encoding="utf-8",
     )

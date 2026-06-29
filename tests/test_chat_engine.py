@@ -42,7 +42,7 @@ def fresh_engine(monkeypatch):
     import backend.chat.engine as engine_module
 
     engine_module.ChatEngine._instance = None
-    monkeypatch.setattr(engine_module.shutil, "which", lambda name: "/usr/bin/hermes")
+    monkeypatch.setattr(engine_module.shutil, "which", lambda name: "/usr/bin/nastech")
     monkeypatch.setattr(
         engine_module.subprocess,
         "run",
@@ -77,22 +77,22 @@ def test_chat_diagnostics_keeps_tmux_and_direct_import_detail():
     assert '@router.get("/diagnostics")' in api
     assert "from run_agent import AIAgent" in diagnostics_block
     assert "TmuxChatFallback.is_available()" in diagnostics_block
-    assert "TmuxChatFallback.find_hermes_pane()" in diagnostics_block
+    assert "TmuxChatFallback.find_nastech_pane()" in diagnostics_block
     assert '"tmux_pane_id": tmux_pane' in diagnostics_block
 
 
-def test_send_message_resumes_captured_hermes_session(monkeypatch):
+def test_send_message_resumes_captured_nastech_session(monkeypatch):
     engine = fresh_engine(monkeypatch)
     session = engine.create_session()
     commands = []
     processes = [
         FakeProcess(
             stdout_chunks=[b"first\n"],
-            stderr_lines=[b"session_id: hermes-123\n"],
+            stderr_lines=[b"session_id: nastech-123\n"],
         ),
         FakeProcess(
             stdout_chunks=[b"second\n"],
-            stderr_lines=[b"session_id: hermes-123\n"],
+            stderr_lines=[b"session_id: nastech-123\n"],
         ),
     ]
 
@@ -106,9 +106,9 @@ def test_send_message_resumes_captured_hermes_session(monkeypatch):
     collect_events(engine.send_message(session.id, "hello"))
     collect_events(engine.send_message(session.id, "again"))
 
-    assert session.hermes_session_id == "hermes-123"
+    assert session.nastech_session_id == "nastech-123"
     assert "--resume" not in commands[0]
-    assert commands[1][commands[1].index("--resume") + 1] == "hermes-123"
+    assert commands[1][commands[1].index("--resume") + 1] == "nastech-123"
 
 
 def test_completed_stream_is_removed_from_composer_state(monkeypatch):
@@ -119,7 +119,7 @@ def test_completed_stream_is_removed_from_composer_state(monkeypatch):
         "backend.chat.engine.subprocess.Popen",
         lambda *args, **kwargs: FakeProcess(
             stdout_chunks=[b"done\n"],
-            stderr_lines=[b"session_id: hermes-clean\n"],
+            stderr_lines=[b"session_id: nastech-clean\n"],
         ),
     )
     monkeypatch.setattr("backend.chat.engine._emit_tool_events", lambda *args: None)
@@ -148,7 +148,7 @@ def test_composer_state_uses_configured_model_when_session_model_is_empty(monkey
         encoding="utf-8",
     )
 
-    monkeypatch.setattr("backend.chat.engine.default_hermes_dir", lambda *args: str(tmp_path))
+    monkeypatch.setattr("backend.chat.engine.default_nastech_dir", lambda *args: str(tmp_path))
 
     assert engine.get_composer_state(session.id).model == "gpt-5.5"
 
@@ -199,7 +199,7 @@ def test_emit_tool_events_emits_every_distinct_reasoning_block(monkeypatch, tmp_
             ("other", None, "unrelated session", 5),  # different session — ignored
         ],
     )
-    monkeypatch.setattr(engine_module, "default_hermes_dir", lambda *args: str(tmp_path))
+    monkeypatch.setattr(engine_module, "default_nastech_dir", lambda *args: str(tmp_path))
 
     streamer = ChatStreamer()
     engine_module._emit_tool_events(streamer, "s1")
@@ -229,7 +229,7 @@ def test_cancel_stream_escalates_to_kill(monkeypatch):
 
         def wait(self, timeout=None):
             if timeout is not None and not self.killed:
-                raise subprocess.TimeoutExpired("hermes", timeout)
+                raise subprocess.TimeoutExpired("nastech", timeout)
             return self.returncode
 
     process = HangingProcess()

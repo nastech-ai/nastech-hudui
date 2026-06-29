@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from '../i18n'
 
-const HERMES_ASCII = [
+const NASTECH_ASCII = [
   ' ██╗  ██╗███████╗██████╗ ███╗   ███╗███████╗███████╗',
   ' ██║  ██║██╔════╝██╔══██╗████╗ ████║██╔════╝██╔════╝',
   ' ███████║█████╗  ██████╔╝██╔████╔██║█████╗  ███████╗',
@@ -25,7 +25,7 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
     `☤ ${t('boot.version')} v0.10.0`,
     '',
     `${t('boot.connecting')}`,
-    'Reading ~/.hermes/state.db',
+    'Reading ~/.nastech/state.db',
     'Scanning memory banks',
     'Indexing skill library',
     'Checking service health',
@@ -77,7 +77,7 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
           whiteSpace: 'pre',
         }}
       >
-        {HERMES_ASCII.join('\n')}
+        {NASTECH_ASCII.join('\n')}
       </pre>
 
       {/* Boot text */}

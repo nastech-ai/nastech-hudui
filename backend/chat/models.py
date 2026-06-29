@@ -71,7 +71,7 @@ class ChatSession:
     id: str
     profile: Optional[str] = None
     model: Optional[str] = None
-    hermes_session_id: Optional[str] = None
+    nastech_session_id: Optional[str] = None
     title: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.now)
     last_activity: datetime = field(default_factory=datetime.now)

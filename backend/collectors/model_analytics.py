@@ -1,4 +1,4 @@
-"""Aggregate per-model usage from Hermes state.db."""
+"""Aggregate per-model usage from NasTech state.db."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from typing import Optional
 from ..cache import get_cached_or_compute
 from .model_info import _lookup_model, _read_models_cache
 from .models import ModelAnalyticsState, ModelSessionUsage, ModelUsage
-from .utils import default_hermes_dir, safe_get
+from .utils import default_nastech_dir, safe_get
 
 
 def _table_columns(cursor: sqlite3.Cursor, table: str) -> set[str]:
@@ -94,8 +94,8 @@ def _session_from_row(row: sqlite3.Row) -> ModelSessionUsage:
     )
 
 
-def _do_collect(hermes_path: Path, days: Optional[int]) -> ModelAnalyticsState:
-    db_path = hermes_path / "state.db"
+def _do_collect(nastech_path: Path, days: Optional[int]) -> ModelAnalyticsState:
+    db_path = nastech_path / "state.db"
     if not db_path.exists():
         return ModelAnalyticsState(period_days=days)
 
@@ -168,7 +168,7 @@ def _do_collect(hermes_path: Path, days: Optional[int]) -> ModelAnalyticsState:
             if usage.last_used_at is None or started > usage.last_used_at:
                 usage.last_used_at = started
 
-    cache = _read_models_cache(hermes_path)
+    cache = _read_models_cache(nastech_path)
     for usage in models.values():
         usage.session_details.sort(
             key=lambda session: session.started_at or datetime.min,
@@ -183,15 +183,15 @@ def _do_collect(hermes_path: Path, days: Optional[int]) -> ModelAnalyticsState:
 
 
 def collect_model_analytics(
-    hermes_dir: Optional[str] = None,
+    nastech_dir: Optional[str] = None,
     days: Optional[int] = 30,
 ) -> ModelAnalyticsState:
-    hermes_path = Path(default_hermes_dir(hermes_dir))
+    nastech_path = Path(default_nastech_dir(nastech_dir))
     ttl_key = "all" if days is None else str(days)
-    db_path = hermes_path / "state.db"
+    db_path = nastech_path / "state.db"
     return get_cached_or_compute(
-        cache_key=f"model_analytics:{hermes_path}:{ttl_key}",
-        compute_fn=lambda: _do_collect(hermes_path, days),
-        file_paths=[db_path, hermes_path / "models_dev_cache.json"],
+        cache_key=f"model_analytics:{nastech_path}:{ttl_key}",
+        compute_fn=lambda: _do_collect(nastech_path, days),
+        file_paths=[db_path, nastech_path / "models_dev_cache.json"],
         ttl=30,
     )

@@ -2,20 +2,20 @@
 
 ## What This Is
 
-Hermes HUD Web UI — the browser version of hermes-hud (TUI consciousness monitor). FastAPI backend + React frontend. Reads from `~/.hermes/` to display agent state.
+NasTech HUD Web UI — the browser version of nastech-hud (TUI consciousness monitor). FastAPI backend + React frontend. Reads from `~/.nastech/` to display agent state.
 
 ## Running
 
 ```bash
 # Full stack (production)
-./install.sh && hermes-hudui
+./install.sh && nastech-hudui
 
 # Development
-hermes-hudui --dev              # backend with auto-reload on :3001
+nastech-hudui --dev              # backend with auto-reload on :3001
 cd frontend && npm run dev      # frontend dev server on :5173
 ```
 
-Requires Python 3.11+ and Node 18+. Backend depends on hermes-hud package for collectors.
+Requires Python 3.11+ and Node 18+. Backend depends on nastech-hud package for collectors.
 
 ## Architecture
 
@@ -30,11 +30,11 @@ frontend/src/components/ One panel component per tab/data source
 frontend/src/index.css  Theme CSS variables, panel system, effects
 ```
 
-**Data flow:** hermes_hud.collectors → FastAPI endpoints → SWR fetch → React panels
+**Data flow:** nastech_hud.collectors → FastAPI endpoints → SWR fetch → React panels
 
 ## Key Patterns
 
-- Backend imports hermes_hud.collectors directly — no data logic duplication
+- Backend imports nastech_hud.collectors directly — no data logic duplication
 - 4 themes as CSS custom properties on `[data-theme]` attribute
 - Panel component with title-in-border pattern
 - SWR for data fetching with configurable refresh intervals

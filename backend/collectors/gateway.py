@@ -1,4 +1,4 @@
-"""Gateway status + actions (restart / update hermes)."""
+"""Gateway status + actions (restart / update nastech)."""
 
 from __future__ import annotations
 
@@ -12,13 +12,13 @@ from typing import Optional
 
 from ..cache import get_cached_or_compute
 from .models import GatewayState, ManagedToolStatus, ManagedToolsState, PlatformStatus
-from .utils import default_hermes_dir, load_yaml, parse_timestamp
+from .utils import default_nastech_dir, load_yaml, parse_timestamp
 
-# Maps a stable action name (used in URLs + state files) to the `hermes`
+# Maps a stable action name (used in URLs + state files) to the `nastech`
 # argv to execute. Adding an action = adding one entry here.
 ACTIONS: dict[str, list[str]] = {
     "gateway-restart": ["gateway", "restart"],
-    "hermes-update": ["update"],
+    "nastech-update": ["update"],
 }
 ACTION_NAMES = frozenset(ACTIONS)
 
@@ -93,19 +93,19 @@ def _truthy(value) -> bool:
     return False
 
 
-def _load_config(hermes_path: Path) -> dict:
-    path = hermes_path / "config.yaml"
+def _load_config(nastech_path: Path) -> dict:
+    path = nastech_path / "config.yaml"
     if not path.exists():
         return {}
     data = load_yaml(path.read_text(encoding="utf-8"))
     return data if isinstance(data, dict) else {}
 
 
-def _has_nous_auth(hermes_path: Path, env: dict[str, str]) -> bool:
+def _has_nous_auth(nastech_path: Path, env: dict[str, str]) -> bool:
     if env.get("NOUS_API_KEY") or env.get("NOUS_ACCESS_TOKEN"):
         return True
     for filename in ("auth.json", ".nous_oauth.json", "nous_auth.json"):
-        path = hermes_path / filename
+        path = nastech_path / filename
         if not path.exists():
             continue
         try:
@@ -119,14 +119,14 @@ def _has_nous_auth(hermes_path: Path, env: dict[str, str]) -> bool:
 
 
 def collect_managed_tools(
-    hermes_dir: Optional[str] = None,
+    nastech_dir: Optional[str] = None,
     env: Optional[dict[str, str]] = None,
 ) -> ManagedToolsState:
     """Collect managed Tool Gateway routing state for user-facing tools."""
-    hermes_path = Path(default_hermes_dir(hermes_dir))
+    nastech_path = Path(default_nastech_dir(nastech_dir))
     env = env if env is not None else os.environ
-    config = _load_config(hermes_path)
-    nous_auth_present = _has_nous_auth(hermes_path, env)
+    config = _load_config(nastech_path)
+    nous_auth_present = _has_nous_auth(nastech_path, env)
     tools: list[ManagedToolStatus] = []
 
     for item in _MANAGED_TOOL_DEFS:
@@ -199,17 +199,17 @@ def collect_managed_tools(
     return ManagedToolsState(tools=tools, nous_auth_present=nous_auth_present)
 
 
-def _do_collect_gateway(hermes_path: Path) -> GatewayState:
-    state_path = hermes_path / "gateway_state.json"
+def _do_collect_gateway(nastech_path: Path) -> GatewayState:
+    state_path = nastech_path / "gateway_state.json"
     if not state_path.exists():
-        return GatewayState(managed_tools=collect_managed_tools(str(hermes_path)))
+        return GatewayState(managed_tools=collect_managed_tools(str(nastech_path)))
 
     try:
         data = json.loads(state_path.read_text(encoding="utf-8"))
     except Exception:
-        return GatewayState(managed_tools=collect_managed_tools(str(hermes_path)))
+        return GatewayState(managed_tools=collect_managed_tools(str(nastech_path)))
     if not isinstance(data, dict):
-        return GatewayState(managed_tools=collect_managed_tools(str(hermes_path)))
+        return GatewayState(managed_tools=collect_managed_tools(str(nastech_path)))
 
     pid = data.get("pid")
     platforms: list[PlatformStatus] = []
@@ -237,24 +237,24 @@ def _do_collect_gateway(hermes_path: Path) -> GatewayState:
         updated_at=parse_timestamp(data.get("updated_at")),
         active_agents=int(data.get("active_agents") or 0),
         platforms=platforms,
-        managed_tools=collect_managed_tools(str(hermes_path)),
+        managed_tools=collect_managed_tools(str(nastech_path)),
     )
 
 
-def collect_gateway_status(hermes_dir: Optional[str] = None) -> GatewayState:
-    hermes_path = Path(default_hermes_dir(hermes_dir))
+def collect_gateway_status(nastech_dir: Optional[str] = None) -> GatewayState:
+    nastech_path = Path(default_nastech_dir(nastech_dir))
     return get_cached_or_compute(
-        cache_key=f"gateway:{hermes_path}",
-        compute_fn=lambda: _do_collect_gateway(hermes_path),
-        file_paths=[hermes_path / "gateway_state.json"],
+        cache_key=f"gateway:{nastech_path}",
+        compute_fn=lambda: _do_collect_gateway(nastech_path),
+        file_paths=[nastech_path / "gateway_state.json"],
         ttl=5,
     )
 
 
 # ── Actions: restart / update ──────────────────────────────────────────
 
-def _log_dir(hermes_path: Path) -> Path:
-    d = hermes_path / "logs" / "hud"
+def _log_dir(nastech_path: Path) -> Path:
+    d = nastech_path / "logs" / "hud"
     d.mkdir(parents=True, exist_ok=True)
     try:
         os.chmod(d, 0o700)
@@ -263,12 +263,12 @@ def _log_dir(hermes_path: Path) -> Path:
     return d
 
 
-def _state_path(hermes_path: Path, name: str) -> Path:
-    return _log_dir(hermes_path) / f"{name}.json"
+def _state_path(nastech_path: Path, name: str) -> Path:
+    return _log_dir(nastech_path) / f"{name}.json"
 
 
-def _log_path(hermes_path: Path, name: str) -> Path:
-    return _log_dir(hermes_path) / f"{name}.log"
+def _log_path(nastech_path: Path, name: str) -> Path:
+    return _log_dir(nastech_path) / f"{name}.log"
 
 
 def _write_state(path: Path, state: dict) -> None:
@@ -290,23 +290,23 @@ def _read_state(path: Path) -> dict:
         return {}
 
 
-def run_action(name: str, hermes_dir: Optional[str] = None) -> dict:
-    """Spawn a detached hermes action. Returns a descriptor dict."""
+def run_action(name: str, nastech_dir: Optional[str] = None) -> dict:
+    """Spawn a detached nastech action. Returns a descriptor dict."""
     if name not in ACTION_NAMES:
         raise ValueError(f"Unknown action: {name}")
 
-    hermes_bin = shutil.which("hermes")
-    if not hermes_bin:
-        raise RuntimeError("hermes CLI not found on PATH")
+    nastech_bin = shutil.which("nastech")
+    if not nastech_bin:
+        raise RuntimeError("nastech CLI not found on PATH")
 
-    hermes_path = Path(default_hermes_dir(hermes_dir))
-    log_file = _log_path(hermes_path, name)
-    state_file = _state_path(hermes_path, name)
+    nastech_path = Path(default_nastech_dir(nastech_dir))
+    log_file = _log_path(nastech_path, name)
+    state_file = _state_path(nastech_path, name)
 
     argv_tail = ACTIONS[name]
 
     env = os.environ.copy()
-    env["HERMES_NONINTERACTIVE"] = "1"
+    env["NASTECH_NONINTERACTIVE"] = "1"
 
     log_fh = open(log_file, "wb", buffering=0)
     try:
@@ -315,7 +315,7 @@ def run_action(name: str, hermes_dir: Optional[str] = None) -> dict:
         pass
 
     proc = subprocess.Popen(
-        [hermes_bin, *argv_tail],
+        [nastech_bin, *argv_tail],
         stdout=log_fh,
         stderr=subprocess.STDOUT,
         stdin=subprocess.DEVNULL,
@@ -348,13 +348,13 @@ def _tail_lines(path: Path, max_lines: int = 200) -> list[str]:
     return lines[-max_lines:]
 
 
-def read_action_status(name: str, hermes_dir: Optional[str] = None) -> dict:
+def read_action_status(name: str, nastech_dir: Optional[str] = None) -> dict:
     if name not in ACTION_NAMES:
         raise ValueError(f"Unknown action: {name}")
 
-    hermes_path = Path(default_hermes_dir(hermes_dir))
-    state = _read_state(_state_path(hermes_path, name))
-    log_file = _log_path(hermes_path, name)
+    nastech_path = Path(default_nastech_dir(nastech_dir))
+    state = _read_state(_state_path(nastech_path, name))
+    log_file = _log_path(nastech_path, name)
 
     pid = state.get("pid")
     exit_code: Optional[int] = state.get("exit_code")

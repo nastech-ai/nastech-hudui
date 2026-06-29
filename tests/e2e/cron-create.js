@@ -16,7 +16,7 @@ async function main() {
 
     await page.addInitScript(() => {
       sessionStorage.setItem('hud-booted', 'true')
-      localStorage.setItem('hermes-hudui-lang', 'en')
+      localStorage.setItem('nastech-hudui-lang', 'en')
     })
 
     await page.route('**/api/dashboard', async () => {
@@ -82,7 +82,7 @@ async function main() {
     await page.getByRole('button', { name: '+ Advanced' }).click()
     await page.locator('input[placeholder="llm-wiki, research"]').fill('llm-wiki, research')
     await page.locator('input[placeholder="digest.py"]').fill('digest.py')
-    await page.locator('input[placeholder="/home/zerocool/project"]').fill('/tmp/hermes-hudui-e2e')
+    await page.locator('input[placeholder="/home/zerocool/project"]').fill('/tmp/nastech-hudui-e2e')
 
     await page.getByRole('button', { name: /^Create$/ }).click()
     await page.waitForFunction(() => document.body.textContent.includes('E2E cron digest'))
@@ -95,7 +95,7 @@ async function main() {
       repeat: 3,
       skills: ['llm-wiki', 'research'],
       script: 'digest.py',
-      workdir: '/tmp/hermes-hudui-e2e',
+      workdir: '/tmp/nastech-hudui-e2e',
     })
 
     console.log('Cron create E2E passed')

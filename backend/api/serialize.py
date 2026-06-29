@@ -1,4 +1,4 @@
-"""Dataclass → dict serialization for Hermes HUD models."""
+"""Dataclass → dict serialization for NasTech HUD models."""
 
 from __future__ import annotations
 

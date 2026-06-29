@@ -28,10 +28,10 @@ async def restart_gateway():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/hermes/update")
-async def update_hermes():
+@router.post("/nastech/update")
+async def update_nastech():
     try:
-        return run_action("hermes-update")
+        return run_action("nastech-update")
     except RuntimeError as e:
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:

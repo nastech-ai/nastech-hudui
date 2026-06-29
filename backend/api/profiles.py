@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from backend.cache import clear_cache
 from backend.collectors.profiles import collect_profiles
-from backend.collectors.utils import default_hermes_dir, load_yaml
+from backend.collectors.utils import default_nastech_dir, load_yaml
 from .serialize import to_dict
 
 router = APIRouter()
@@ -33,7 +33,7 @@ PROVIDER_OPTIONS = [
 ]
 
 TOOLSET_OPTIONS = [
-    "hermes-cli",
+    "nastech-cli",
     "web",
     "browser",
     "terminal",
@@ -75,14 +75,14 @@ class ProfileEditBody(BaseModel):
 
 
 def _profile_dir(profile_name: str) -> Path:
-    hermes_dir = Path(default_hermes_dir())
+    nastech_dir = Path(default_nastech_dir())
     if profile_name == "default":
-        return hermes_dir
+        return nastech_dir
     if not PROFILE_NAME_RE.match(profile_name) or profile_name in {".", ".."}:
         raise HTTPException(status_code=400, detail="invalid profile name")
-    path = hermes_dir / "profiles" / profile_name
+    path = nastech_dir / "profiles" / profile_name
     try:
-        path.relative_to(hermes_dir / "profiles")
+        path.relative_to(nastech_dir / "profiles")
     except ValueError:
         raise HTTPException(status_code=400, detail="invalid profile name") from None
     if not path.is_dir():

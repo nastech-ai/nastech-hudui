@@ -1,4 +1,4 @@
-"""Collect OAuth provider auth status from ~/.hermes/auth.json."""
+"""Collect OAuth provider auth status from ~/.nastech/auth.json."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from typing import Optional
 
 from ..cache import get_cached_or_compute
 from .models import ProviderAuth, ProvidersState
-from .utils import default_hermes_dir, load_yaml, parse_timestamp
+from .utils import default_nastech_dir, load_yaml, parse_timestamp
 
 # Human-readable names for known provider IDs.
 _DISPLAY_NAMES = {
@@ -61,8 +61,8 @@ def _classify(expires_at: Optional[datetime], has_token: bool) -> str:
     return "connected"
 
 
-def _read_config(hermes_path: Path) -> tuple[str, str]:
-    path = hermes_path / "config.yaml"
+def _read_config(nastech_path: Path) -> tuple[str, str]:
+    path = nastech_path / "config.yaml"
     if not path.exists():
         return "", ""
     try:
@@ -99,9 +99,9 @@ def _read_dotenv_values(path: Path) -> dict[str, str]:
     return values
 
 
-def _available_key_names(hermes_path: Path) -> set[str]:
+def _available_key_names(nastech_path: Path) -> set[str]:
     names = {key for key, value in os.environ.items() if value}
-    names.update(_read_dotenv_values(hermes_path / ".env"))
+    names.update(_read_dotenv_values(nastech_path / ".env"))
     names.update(_read_dotenv_values(Path.home() / ".env"))
     return names
 
@@ -111,8 +111,8 @@ def _provider_has_key(provider: str, available_keys: set[str]) -> bool:
     return any(key in available_keys for key in aliases)
 
 
-def _read_models_cache(hermes_path: Path) -> dict:
-    path = hermes_path / "models_dev_cache.json"
+def _read_models_cache(nastech_path: Path) -> dict:
+    path = nastech_path / "models_dev_cache.json"
     if not path.exists():
         return {}
     try:
@@ -151,7 +151,7 @@ def _add_drift_warnings(
     active: Optional[str],
     config_provider: str,
     config_model: str,
-    hermes_path: Path,
+    nastech_path: Path,
 ) -> list[str]:
     warnings: list[str] = []
     if not config_provider:
@@ -159,7 +159,7 @@ def _add_drift_warnings(
 
     configured = providers.get(config_provider)
     has_connected_oauth = configured is not None and configured.status in {"connected", "expiring"}
-    has_key = _provider_has_key(config_provider, _available_key_names(hermes_path))
+    has_key = _provider_has_key(config_provider, _available_key_names(nastech_path))
 
     if not has_connected_oauth and not has_key:
         warnings.append(f"No available key or OAuth token for configured provider '{config_provider}'")
@@ -173,7 +173,7 @@ def _add_drift_warnings(
         warnings.append(f"Configured provider is '{config_provider}' but active OAuth provider is '{active}'")
 
     if config_model:
-        found_provider, metadata = _find_model_metadata(_read_models_cache(hermes_path), config_provider, config_model)
+        found_provider, metadata = _find_model_metadata(_read_models_cache(nastech_path), config_provider, config_model)
         if metadata is None:
             warnings.append(f"Configured model '{config_model}' was not found in models.dev metadata")
         elif found_provider and found_provider != config_provider:
@@ -229,13 +229,13 @@ def _build_provider(pid: str, entry: dict, active_id: Optional[str]) -> Provider
     )
 
 
-def _do_collect_providers(hermes_path: Path) -> ProvidersState:
-    auth_path = hermes_path / "auth.json"
-    anthropic_path = hermes_path / ".anthropic_oauth.json"
+def _do_collect_providers(nastech_path: Path) -> ProvidersState:
+    auth_path = nastech_path / "auth.json"
+    anthropic_path = nastech_path / ".anthropic_oauth.json"
 
     providers: dict[str, ProviderAuth] = {}
     active: Optional[str] = None
-    config_provider, config_model = _read_config(hermes_path)
+    config_provider, config_model = _read_config(nastech_path)
 
     # auth.json — Nous + OpenAI-Codex via `providers`, plus `credential_pool` for the rest.
     if auth_path.exists():
@@ -289,21 +289,21 @@ def _do_collect_providers(hermes_path: Path) -> ProvidersState:
         active_provider=active,
         config_provider=config_provider,
         config_model=config_model,
-        warnings=_add_drift_warnings(providers, active, config_provider, config_model, hermes_path),
+        warnings=_add_drift_warnings(providers, active, config_provider, config_model, nastech_path),
     )
 
 
-def collect_providers(hermes_dir: Optional[str] = None) -> ProvidersState:
-    hermes_path = Path(default_hermes_dir(hermes_dir))
+def collect_providers(nastech_dir: Optional[str] = None) -> ProvidersState:
+    nastech_path = Path(default_nastech_dir(nastech_dir))
     return get_cached_or_compute(
-        cache_key=f"providers:{hermes_path}",
-        compute_fn=lambda: _do_collect_providers(hermes_path),
+        cache_key=f"providers:{nastech_path}",
+        compute_fn=lambda: _do_collect_providers(nastech_path),
         file_paths=[
-            hermes_path / "auth.json",
-            hermes_path / ".anthropic_oauth.json",
-            hermes_path / "config.yaml",
-            hermes_path / ".env",
-            hermes_path / "models_dev_cache.json",
+            nastech_path / "auth.json",
+            nastech_path / ".anthropic_oauth.json",
+            nastech_path / "config.yaml",
+            nastech_path / ".env",
+            nastech_path / "models_dev_cache.json",
         ],
         ttl=30,
     )

@@ -93,7 +93,7 @@ def test_list_replay_runs_returns_latest_session_metadata(tmp_path: Path) -> Non
     _insert_session(db, id="older", title="Older", started_at=100)
     _insert_session(db, id="newer", title="Newer", started_at=200)
 
-    runs = list_replay_runs(hermes_dir=str(tmp_path))
+    runs = list_replay_runs(nastech_dir=str(tmp_path))
 
     assert [run.source_session_id for run in runs] == ["newer", "older"]
     assert runs[0].title == "Newer"
@@ -106,7 +106,7 @@ def test_get_replay_detail_handles_missing_messages(tmp_path: Path) -> None:
     _make_state_db(db)
     _insert_session(db)
 
-    detail = get_replay_detail("session-1", hermes_dir=str(tmp_path))
+    detail = get_replay_detail("session-1", nastech_dir=str(tmp_path))
 
     assert detail is not None
     assert detail.run.source_session_id == "session-1"
@@ -118,5 +118,5 @@ def test_get_replay_detail_returns_none_for_unknown_session(tmp_path: Path) -> N
     db = tmp_path / "state.db"
     _make_state_db(db)
 
-    assert get_replay_detail("missing", hermes_dir=str(tmp_path)) is None
+    assert get_replay_detail("missing", nastech_dir=str(tmp_path)) is None
 

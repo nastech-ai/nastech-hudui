@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Benchmark HUD chat streaming latency vs raw hermes CLI."""
+"""Benchmark HUD chat streaming latency vs raw nastech CLI."""
 
 import json
 import subprocess
@@ -81,7 +81,7 @@ def bench_hud(session_id: str) -> dict:
 
 
 def bench_cli() -> dict:
-    cmd = ["hermes", "chat", "-q", PROMPT, "-Q", "--source", "tool"]
+    cmd = ["nastech", "chat", "-q", PROMPT, "-Q", "--source", "tool"]
     t0 = time.perf_counter()
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             cwd=__import__("os").path.expanduser("~"))
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     print(f"Session: {sid}")
     print(f"Prompt: {PROMPT!r}")
 
-    cli_results = run("hermes CLI (raw)", bench_cli)
+    cli_results = run("nastech CLI (raw)", bench_cli)
     hud_results = run("HUD chat (:3001)", bench_hud, sid)
 
     cli_med = median([r["t_first_text"] for r in cli_results])

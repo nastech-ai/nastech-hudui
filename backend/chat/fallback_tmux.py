@@ -12,7 +12,7 @@ from .streamer import ChatStreamer
 
 
 class TmuxChatFallback:
-    """Send messages to Hermes via TMUX send-keys."""
+    """Send messages to NasTech via TMUX send-keys."""
 
     def __init__(self, session_id: str, pane_id: str | None = None):
         self.session_id = session_id
@@ -29,8 +29,8 @@ class TmuxChatFallback:
             return False
 
     @staticmethod
-    def find_hermes_pane() -> str | None:
-        """Find a tmux pane running Hermes CLI."""
+    def find_nastech_pane() -> str | None:
+        """Find a tmux pane running NasTech CLI."""
         try:
             result = subprocess.run(
                 [
@@ -51,16 +51,16 @@ class TmuxChatFallback:
                 parts = line.split("\t")
                 if len(parts) == 2:
                     pane_id, cmd = parts
-                    if "hermes" in cmd.lower():
+                    if "nastech" in cmd.lower():
                         return pane_id
             return None
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return None
 
     def send_message(self, content: str) -> bool:
-        """Send a message to the Hermes pane."""
+        """Send a message to the NasTech pane."""
         if not self.pane_id:
-            self.pane_id = self.find_hermes_pane()
+            self.pane_id = self.find_nastech_pane()
             if not self.pane_id:
                 return False
 

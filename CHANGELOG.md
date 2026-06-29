@@ -1,11 +1,11 @@
 # Changelog
 
-All notable changes to hermes-hudui are documented here.
+All notable changes to nastech-hudui are documented here.
 
 ## [Unreleased]
 
 ### Added
-- **Agent compatibility diagnostics** — the Health tab now reports two drift checks: *Agent data layout* (flags pre-0.17 `~/.hermes/` paths the HUD no longer reads, e.g. `memory/` → `memories/`, root `jobs.json` → `cron/jobs.json`) and *Agent schema version* (compares the live `state.db` schema version against the HUD-verified baseline). Both degrade to `ok` when data is absent and only warn on positively-detected drift, turning silent blank tabs into an actionable warning. Verified against **Hermes Agent v0.17.0** (state.db schema v16); baseline lives in `backend/collectors/health.py` (`VERIFIED_AGENT_VERSION`, `TESTED_SCHEMA_VERSIONS`).
+- **Agent compatibility diagnostics** — the Health tab now reports two drift checks: *Agent data layout* (flags pre-0.17 `~/.nastech/` paths the HUD no longer reads, e.g. `memory/` → `memories/`, root `jobs.json` → `cron/jobs.json`) and *Agent schema version* (compares the live `state.db` schema version against the HUD-verified baseline). Both degrade to `ok` when data is absent and only warn on positively-detected drift, turning silent blank tabs into an actionable warning. Verified against **NasTech Agent v0.17.0** (state.db schema v16); baseline lives in `backend/collectors/health.py` (`VERIFIED_AGENT_VERSION`, `TESTED_SCHEMA_VERSIONS`).
 
 ---
 
@@ -32,8 +32,8 @@ All notable changes to hermes-hudui are documented here.
 
 ### Fixed
 - **Cross-session chat state bugs** — each chat session now owns its own AI SDK Chat instance, so switching sessions mid-stream no longer bleeds the streaming response into the other session's thread, persists it under the wrong localStorage key, or cancels the wrong backend process. Composer state no longer leaks across rapid session switches, and ended sessions can't resurrect deleted history.
-- **Tool-calls health diagnostic** — the Health tab checked for a standalone `tool_calls` table, but hermes stores tool calls as a column on `messages`; the diagnostic always reported a false "table missing". It now checks the column (renamed to "tool calls column").
-- **Hermes CLI discovery** — `~/.local/bin` and `/usr/local/bin` are appended to PATH at startup so the chat engine finds the hermes CLI when the server is launched from a minimal environment (systemd, cron, launchd).
+- **Tool-calls health diagnostic** — the Health tab checked for a standalone `tool_calls` table, but nastech stores tool calls as a column on `messages`; the diagnostic always reported a false "table missing". It now checks the column (renamed to "tool calls column").
+- **NasTech CLI discovery** — `~/.local/bin` and `/usr/local/bin` are appended to PATH at startup so the chat engine finds the nastech CLI when the server is launched from a minimal environment (systemd, cron, launchd).
 
 ### Added
 - **Streaming session indicators** — sessions in the chat sidebar show a pulsing dot while their response is streaming, including sessions streaming in the background after a switch.
@@ -49,16 +49,16 @@ All notable changes to hermes-hudui are documented here.
 ## [0.9.0] — 2026-05-09
 
 ### Added
-- **Hermes Replay** — new Replay tab turns local Hermes sessions into redacted run receipts with normalized timelines, proof artifacts, redaction review, Safe Share Mode exports, local hashes, Ed25519 signatures, fork JSON, share-card PNGs, static HTML/Markdown/JSON exports, and local public/unlisted publish directories.
+- **NasTech Replay** — new Replay tab turns local NasTech sessions into redacted run receipts with normalized timelines, proof artifacts, redaction review, Safe Share Mode exports, local hashes, Ed25519 signatures, fork JSON, share-card PNGs, static HTML/Markdown/JSON exports, and local public/unlisted publish directories.
 - **Replay launch assets** — README now documents local-only export behavior and includes the Replay tab screenshot plus an example redacted replay artifact.
 - **Replay verification** — receipt verification now lives inside Replay as a collapsible export check instead of a separate top-level tab.
-- **Chat latency diagnostics** — Chat now surfaces process spawn time, first-token latency, total turn time, resume state, and recent averages, with a local benchmark helper for comparing HUD streaming against the raw Hermes CLI.
+- **Chat latency diagnostics** — Chat now surfaces process spawn time, first-token latency, total turn time, resume state, and recent averages, with a local benchmark helper for comparing HUD streaming against the raw NasTech CLI.
 - **GitHub Actions CI** — pushes and pull requests now run Python tests and the frontend production build.
 
 ### Changed
 - **Replay layout polish** — the timeline now uses the main detail space beside Replay Runs, while receipt, proof score, redaction, export, share preview, settings, and verification are consolidated in the right column.
 - **Replay export actions** — export controls are grouped as Prepare, Export, Share Images, and Publish so the right column is easier to scan.
-- **Default theme** — Hermes Teal is now the default first-load theme, and the theme picker is visibly labeled and no longer clipped by the top bar.
+- **Default theme** — NasTech Teal is now the default first-load theme, and the theme picker is visibly labeled and no longer clipped by the top bar.
 
 ### Verification
 - `pytest`
@@ -76,18 +76,18 @@ All notable changes to hermes-hudui are documented here.
 - **Model analytics upgrade** — the Model tab now includes rich per-model usage: provider, token split, actual vs estimated cost, API calls, tool calls, last used, average tokens/session, capabilities, sortable columns, and session drilldown.
 - **Actionable Health diagnostics** — Health now exposes more specific checks, suggested fixes, and actions, including gateway, model analytics schema, cache, websocket, sudo, provider, and database signals.
 - **Health live updates** — Health reacts to websocket `data_changed` events with throttled refresh behavior so the tab updates promptly without excessive CPU churn.
-- **Official Hermes Teal theme** — added the canonical Nous Hermes dashboard palette as a selectable theme.
+- **Official NasTech Teal theme** — added the canonical Nous NasTech dashboard palette as a selectable theme.
 - **Fresh release screenshots** — README assets now show the executive dashboard, managed gateway tools, model analytics, plugin hub, and responsive top bar.
 
 ### Changed
 - **Dashboard memory narrative** — the previous Status panel copy now lives inside "What I Remember" with compact stats and a stronger visual treatment.
-- **Gateway update action hardening** — `Update hermes` now requires a second confirmation click, displays explanatory copy, and surfaces last-run time, log path, log tail, and success/failure exit code.
+- **Gateway update action hardening** — `Update nastech` now requires a second confirmation click, displays explanatory copy, and surfaces last-run time, log path, log tail, and success/failure exit code.
 - **Responsive top navigation** — the tab bar now resizes with the browser, scrolls horizontally when needed, and keeps the active tab in view.
 - **README refresh** — updated feature counts, theme list, feature descriptions, and screenshots for the current UI.
 
 ### Fixed
 - **Session compression visibility** — sessions now surface compression-related metadata again where available.
-- **Hermes Teal contrast** — fixed unreadable badge/card text by adding shared theme aliases and tuning the HUD error color for readable contrast on teal panels.
+- **NasTech Teal contrast** — fixed unreadable badge/card text by adding shared theme aliases and tuning the HUD error color for readable contrast on teal panels.
 - **Gateway/Health/Model visual regression coverage** — added focused regression tests for dashboard summary aggregation, theme registration/contrast variables, responsive shell structure, and Gateway update confirmation/status behavior.
 
 ---
@@ -95,34 +95,34 @@ All notable changes to hermes-hudui are documented here.
 ## [0.7.0] — 2026-04-29
 
 ### Added
-- **Cron job creation UI** — `POST /api/cron` endpoint plus a "Create Job" drawer in the Cron tab. Supports interval presets (30m / 1h / 2h / 24h / custom) or raw cron expressions with a live schedule preview, optional name, prompt, repeat count, delivery target (local / origin / telegram / discord / signal / custom `platform:chat_id`), and an Advanced section for skills, script, and absolute workdir. Validation is mirrored client- and server-side: schedule required, `repeat` must be a positive integer, `workdir` must be absolute, and custom interval values must be non-empty. The hermes CLI is invoked via argv (no shell). E2E coverage in `tests/e2e/cron-create.js`.
-- **Profile editing UI** — `GET /api/profiles/options`, `GET /api/profiles/{name}/edit`, and `PUT /api/profiles/{name}/edit` endpoints expose hermes profile config (model, providers, skills, soul, and runtime settings). The Profiles tab now includes an inline editor with atomic, lock-protected writes (`fcntl.flock` + `tempfile.mkstemp` + `os.replace`) matching the rest of the HUD's mutation pattern. E2E coverage in `tests/e2e/profile-edit.js`.
+- **Cron job creation UI** — `POST /api/cron` endpoint plus a "Create Job" drawer in the Cron tab. Supports interval presets (30m / 1h / 2h / 24h / custom) or raw cron expressions with a live schedule preview, optional name, prompt, repeat count, delivery target (local / origin / telegram / discord / signal / custom `platform:chat_id`), and an Advanced section for skills, script, and absolute workdir. Validation is mirrored client- and server-side: schedule required, `repeat` must be a positive integer, `workdir` must be absolute, and custom interval values must be non-empty. The nastech CLI is invoked via argv (no shell). E2E coverage in `tests/e2e/cron-create.js`.
+- **Profile editing UI** — `GET /api/profiles/options`, `GET /api/profiles/{name}/edit`, and `PUT /api/profiles/{name}/edit` endpoints expose nastech profile config (model, providers, skills, soul, and runtime settings). The Profiles tab now includes an inline editor with atomic, lock-protected writes (`fcntl.flock` + `tempfile.mkstemp` + `os.replace`) matching the rest of the HUD's mutation pattern. E2E coverage in `tests/e2e/profile-edit.js`.
 
 ### Fixed
 - **Delete-button busy state on the Cron tab** — busy key for `DELETE /api/cron/{id}` was previously `id:null`, so the spinner never matched `isBusy('delete')`. The action key now resolves to `'delete'` and the spinner renders correctly.
 
 ### Notes
-- Both new mutation endpoints inherit the HUD's localhost-trusted threat model. If you expose hermes-hudui beyond loopback, treat `POST /api/cron` and `PUT /api/profiles/{name}/edit` as RCE-equivalent surfaces (they spawn `hermes` and write profile files respectively).
+- Both new mutation endpoints inherit the HUD's localhost-trusted threat model. If you expose nastech-hudui beyond loopback, treat `POST /api/cron` and `PUT /api/profiles/{name}/edit` as RCE-equivalent surfaces (they spawn `nastech` and write profile files respectively).
 
 ---
 
 ## [0.6.0] — 2026-04-24
 
 ### Added
-- **Providers tab** — read-only view of connected OAuth and API-key providers from `~/.hermes/auth.json` (Nous, Anthropic, OpenAI Codex, OpenRouter, Z.AI, and any others hermes writes). Shows per-provider status (connected / expiring / expired / missing), masked token preview, expires/obtained relative time, scope, auth mode, and an ACTIVE badge for the currently selected provider.
-- **Gateway tab** — live gateway status pulled from `~/.hermes/gateway_state.json` (state, PID with liveness + zombie detection, active agents, per-platform connection state, exit reason) plus two action buttons wired end-to-end: "Restart gateway" shells out to `hermes gateway restart`, "Update hermes" to `hermes update`. Each action spawns detached via `subprocess.Popen`, tees output to `~/.hermes/logs/hud/<action>.log`, and the frontend polls `GET /api/actions/<name>/status` every second, streaming the log tail and final exit code.
-- **Model tab** — live capabilities for the current model, derived from `~/.hermes/models_dev_cache.json` + `config.yaml`. Capability badges (Tools / Vision / Reasoning / Structured Output), context window breakdown (auto from models.dev vs config override vs effective), max output tokens, per-1M-token pricing, release date, and knowledge cutoff.
+- **Providers tab** — read-only view of connected OAuth and API-key providers from `~/.nastech/auth.json` (Nous, Anthropic, OpenAI Codex, OpenRouter, Z.AI, and any others nastech writes). Shows per-provider status (connected / expiring / expired / missing), masked token preview, expires/obtained relative time, scope, auth mode, and an ACTIVE badge for the currently selected provider.
+- **Gateway tab** — live gateway status pulled from `~/.nastech/gateway_state.json` (state, PID with liveness + zombie detection, active agents, per-platform connection state, exit reason) plus two action buttons wired end-to-end: "Restart gateway" shells out to `nastech gateway restart`, "Update nastech" to `nastech update`. Each action spawns detached via `subprocess.Popen`, tees output to `~/.nastech/logs/hud/<action>.log`, and the frontend polls `GET /api/actions/<name>/status` every second, streaming the log tail and final exit code.
+- **Model tab** — live capabilities for the current model, derived from `~/.nastech/models_dev_cache.json` + `config.yaml`. Capability badges (Tools / Vision / Reasoning / Structured Output), context window breakdown (auto from models.dev vs config override vs effective), max output tokens, per-1M-token pricing, release date, and knowledge cutoff.
 
 ### Changed
-- **Sessions panel now shows model names again** — hermes v0.10+ moved the model ID from `model_config` JSON to a dedicated `model` column, so the collector now reads it directly (with a fallback to `model_config` for older DB rows).
-- **Chat tool calls and reasoning are captured again** — hermes v0.10+ prints `session_id` to stderr instead of stdout, so the chat engine now drains stderr concurrently via a background thread. Non-session-id stderr lines are surfaced as error output on non-zero exit.
+- **Sessions panel now shows model names again** — nastech v0.10+ moved the model ID from `model_config` JSON to a dedicated `model` column, so the collector now reads it directly (with a fallback to `model_config` for older DB rows).
+- **Chat tool calls and reasoning are captured again** — nastech v0.10+ prints `session_id` to stderr instead of stdout, so the chat engine now drains stderr concurrently via a background thread. Non-session-id stderr lines are surfaced as error output on non-zero exit.
 - **`collectors.utils.parse_timestamp`** now handles millisecond-epoch values and strips timezone info so naive-local datetimes compare cleanly against `datetime.now()`. Two collector-local duplicates of that logic have been removed.
 
 ### Fixed
 - **gpt-5.5 pricing entry** — previously fell back to the $0/$0 "unpriced" default. Now maps to the Codex OAuth tier so session costs render non-zero. Follow-up: the models.dev entry lists $5/$30/1M for gpt-5.5; the HUD pricing table could be re-synced to models.dev as a later pass.
 
 ### Notes
-- All three new tabs are read/observer-first — no session-token middleware yet. Action endpoints (`POST /api/gateway/restart`, `POST /api/hermes/update`) bind to `127.0.0.1` by default, matching the rest of the HUD's risk model.
+- All three new tabs are read/observer-first — no session-token middleware yet. Action endpoints (`POST /api/gateway/restart`, `POST /api/nastech/update`) bind to `127.0.0.1` by default, matching the rest of the HUD's risk model.
 - Interactive OAuth flows (PKCE browser redirect, device-code polling) are out of scope for this release and planned for v0.7.
 
 ---
@@ -130,7 +130,7 @@ All notable changes to hermes-hudui are documented here.
 ## [0.5.1] — 2026-04-24
 
 ### Fixed
-- **High CPU from file watcher** — watchfiles polled every 300ms over the entire `~/.hermes/` tree, which pegged a core when `state.db` is large and actively written by a running agent. Bumped `poll_delay_ms` to 2000ms (aligned with the 5s broadcast throttle) and excluded `state.db` / `state.db-wal` / `state.db-shm` / `state.db-journal` via a dedicated filter. `force_polling=True` is retained so NFS / WSL1 / VM / Docker-bind-mount setups keep working. Thanks to @louie0609c for the root-cause analysis. Closes #22.
+- **High CPU from file watcher** — watchfiles polled every 300ms over the entire `~/.nastech/` tree, which pegged a core when `state.db` is large and actively written by a running agent. Bumped `poll_delay_ms` to 2000ms (aligned with the 5s broadcast throttle) and excluded `state.db` / `state.db-wal` / `state.db-shm` / `state.db-journal` via a dedicated filter. `force_polling=True` is retained so NFS / WSL1 / VM / Docker-bind-mount setups keep working. Thanks to @louie0609c for the root-cause analysis. Closes #22.
 - **Broken `install.sh` version print** — replaced the invalid `node -version` with `node --version` (thanks @CrayonL).
 
 ---
@@ -193,7 +193,7 @@ All notable changes to hermes-hudui are documented here.
 ## [0.2.0] — Chat + New Tabs
 
 ### Added
-- **Chat tab** — Live chat with your Hermes agent
+- **Chat tab** — Live chat with your NasTech agent
   - Multiple sessions, each with independent message history
   - Responses stream in real time (SSE)
   - Markdown rendering — headers, lists, tables, code blocks

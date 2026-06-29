@@ -26,7 +26,7 @@ def _detail():
 
 
 def test_verify_replay_files_accepts_exported_receipt_and_replay(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
     detail = _detail()
     export_json(detail)
 
@@ -43,7 +43,7 @@ def test_verify_replay_files_accepts_exported_receipt_and_replay(tmp_path, monke
 
 
 def test_verify_replay_files_rejects_tampered_receipt_hash(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
     detail = _detail()
     export_json(detail)
     run_dir = tmp_path / "runs" / detail.run.replay_id
@@ -59,7 +59,7 @@ def test_verify_replay_files_rejects_tampered_receipt_hash(tmp_path, monkeypatch
 
 
 def test_verify_replay_files_rejects_tampered_signature(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
     detail = _detail()
     export_json(detail)
     run_dir = tmp_path / "runs" / detail.run.replay_id

@@ -1,7 +1,7 @@
-"""Snapshot Hermes HUD state for diff tracking over time.
+"""Snapshot NasTech HUD state for diff tracking over time.
 
-Run this daily (via cron or hermes cron) to build a history of growth.
-Snapshots are stored as JSONL in ~/.hermes-hud/snapshots.jsonl
+Run this daily (via cron or nastech cron) to build a history of growth.
+Snapshots are stored as JSONL in ~/.nastech-hud/snapshots.jsonl
 """
 
 from __future__ import annotations
@@ -12,10 +12,10 @@ from datetime import datetime
 from pathlib import Path
 
 from .collect import collect_all
-from .utils import default_hermes_dir
+from .utils import default_nastech_dir
 from .models import HUDSnapshot
 
-SNAPSHOT_DIR = os.path.join(default_hermes_dir(), ".hud")
+SNAPSHOT_DIR = os.path.join(default_nastech_dir(), ".hud")
 
 
 def _snapshot_file() -> str:

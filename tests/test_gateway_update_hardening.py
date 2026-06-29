@@ -4,11 +4,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_hermes_update_requires_confirmation_and_surfaces_status() -> None:
+def test_nastech_update_requires_confirmation_and_surfaces_status() -> None:
     gateway = (ROOT / "frontend/src/components/GatewayPanel.tsx").read_text()
     translations = (ROOT / "frontend/src/i18n/translations.ts").read_text()
 
-    assert 'postPath="/api/hermes/update"' in gateway
+    assert 'postPath="/api/nastech/update"' in gateway
     assert 'confirmLabel={t(\'gateway.confirmUpdate\')}' in gateway
     assert 'confirmPrompt={t(\'gateway.updateConfirmPrompt\')}' in gateway
     assert "showLastStatus" in gateway

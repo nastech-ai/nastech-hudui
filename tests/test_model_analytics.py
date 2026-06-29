@@ -51,9 +51,9 @@ def _insert_session(path: Path, **values) -> None:
 
 
 def test_model_analytics_groups_usage_and_cost_math(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path)
     _insert_session(
         db_path,
@@ -121,7 +121,7 @@ def test_model_analytics_groups_usage_and_cost_math(tmp_path: Path) -> None:
         model="gpt-5.1",
     )
 
-    state = collect_model_analytics(hermes_dir=str(hermes_dir), days=None)
+    state = collect_model_analytics(nastech_dir=str(nastech_dir), days=None)
     by_model = {row.model: row for row in state.models}
 
     assert state.total_sessions == 3
@@ -145,9 +145,9 @@ def test_model_analytics_groups_usage_and_cost_math(tmp_path: Path) -> None:
 
 
 def test_model_analytics_filters_period_and_keeps_session_drilldown(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path)
     now = time.time()
     old_started_at = now - 9 * 86400
@@ -204,7 +204,7 @@ def test_model_analytics_filters_period_and_keeps_session_drilldown(tmp_path: Pa
         model="claude-sonnet-4-6",
     )
 
-    state = collect_model_analytics(hermes_dir=str(hermes_dir), days=7)
+    state = collect_model_analytics(nastech_dir=str(nastech_dir), days=7)
     usage = state.models[0]
 
     assert state.period_days == 7
@@ -221,9 +221,9 @@ def test_model_analytics_filters_period_and_keeps_session_drilldown(tmp_path: Pa
 
 
 def test_model_analytics_enriches_capabilities_from_models_cache(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path)
     _insert_session(
         db_path,
@@ -236,7 +236,7 @@ def test_model_analytics_enriches_capabilities_from_models_cache(tmp_path: Path)
         billing_provider="openai",
         model="gpt-5.1",
     )
-    (hermes_dir / "models_dev_cache.json").write_text(
+    (nastech_dir / "models_dev_cache.json").write_text(
         json.dumps({
             "openai": {
                 "models": {
@@ -253,7 +253,7 @@ def test_model_analytics_enriches_capabilities_from_models_cache(tmp_path: Path)
         encoding="utf-8",
     )
 
-    state = collect_model_analytics(hermes_dir=str(hermes_dir), days=None)
+    state = collect_model_analytics(nastech_dir=str(nastech_dir), days=None)
     model = state.models[0]
 
     assert model.supports_tools is True
@@ -265,9 +265,9 @@ def test_model_analytics_enriches_capabilities_from_models_cache(tmp_path: Path)
 
 
 def test_model_analytics_handles_old_session_schema(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path, include_new_columns=False)
     _insert_session(
         db_path,
@@ -281,7 +281,7 @@ def test_model_analytics_handles_old_session_schema(tmp_path: Path) -> None:
         model=None,
     )
 
-    state = collect_model_analytics(hermes_dir=str(hermes_dir), days=None)
+    state = collect_model_analytics(nastech_dir=str(nastech_dir), days=None)
 
     assert state.models[0].model == "legacy-model"
     assert state.models[0].provider == "openrouter"

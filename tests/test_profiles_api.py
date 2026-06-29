@@ -6,7 +6,7 @@ safety-sensitive surface: round-trip persistence, valid YAML output, path
 traversal / name validation, the "model/provider cannot be silently cleared"
 guards, and that rejected edits never touch the on-disk config.
 
-``default_hermes_dir()`` reads ``HERMES_HOME`` at call time, so the profile
+``default_nastech_dir()`` reads ``NASTECH_HOME`` at call time, so the profile
 tree is built under a tmp dir.
 """
 
@@ -29,8 +29,8 @@ from backend.collectors.utils import load_yaml
 
 
 @pytest.fixture
-def hermes_home(tmp_path: Path, monkeypatch) -> Path:
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+def nastech_home(tmp_path: Path, monkeypatch) -> Path:
+    monkeypatch.setenv("NASTECH_HOME", str(tmp_path))
     return tmp_path
 
 
@@ -43,8 +43,8 @@ def _seed_profile(home: Path, name: str, config: dict) -> Path:
     return profile_dir
 
 
-def test_get_profile_edit_reads_existing_config(hermes_home: Path) -> None:
-    _seed_profile(hermes_home, "work", {"model": {"default": "m1"}, "toolsets": ["web"]})
+def test_get_profile_edit_reads_existing_config(nastech_home: Path) -> None:
+    _seed_profile(nastech_home, "work", {"model": {"default": "m1"}, "toolsets": ["web"]})
 
     payload = get_profile_edit("work")
     assert payload["name"] == "work"
@@ -52,9 +52,9 @@ def test_get_profile_edit_reads_existing_config(hermes_home: Path) -> None:
     assert payload["toolsets"] == ["web"]
 
 
-def test_update_round_trips_config_and_soul(hermes_home: Path) -> None:
+def test_update_round_trips_config_and_soul(nastech_home: Path) -> None:
     profile_dir = _seed_profile(
-        hermes_home, "work", {"model": {"provider": "anthropic", "default": "claude-x"}}
+        nastech_home, "work", {"model": {"provider": "anthropic", "default": "claude-x"}}
     )
 
     body = ProfileEditBody(
@@ -88,33 +88,33 @@ def test_update_round_trips_config_and_soul(hermes_home: Path) -> None:
     assert (profile_dir / "SOUL.md").read_text(encoding="utf-8") == "You are helpful.\n"
 
 
-def test_update_default_profile_writes_to_hermes_root(hermes_home: Path) -> None:
-    _seed_profile(hermes_home, "default", {"model": {"default": "m"}})
+def test_update_default_profile_writes_to_nastech_root(nastech_home: Path) -> None:
+    _seed_profile(nastech_home, "default", {"model": {"default": "m"}})
 
     update_profile_edit(
         "default", ProfileEditBody(model=ProfileModelEdit(default="m2"), soul="hi")
     )
 
-    cfg = load_yaml((hermes_home / "config.yaml").read_text(encoding="utf-8"))
+    cfg = load_yaml((nastech_home / "config.yaml").read_text(encoding="utf-8"))
     assert cfg["model"]["default"] == "m2"
-    assert (hermes_home / "SOUL.md").read_text(encoding="utf-8") == "hi\n"
+    assert (nastech_home / "SOUL.md").read_text(encoding="utf-8") == "hi\n"
 
 
-def test_invalid_profile_name_is_rejected(hermes_home: Path) -> None:
+def test_invalid_profile_name_is_rejected(nastech_home: Path) -> None:
     with pytest.raises(HTTPException) as exc:
         get_profile_edit("../evil")
     assert exc.value.status_code == 400
 
 
-def test_unknown_profile_returns_404(hermes_home: Path) -> None:
+def test_unknown_profile_returns_404(nastech_home: Path) -> None:
     with pytest.raises(HTTPException) as exc:
         get_profile_edit("ghost")
     assert exc.value.status_code == 404
 
 
-def test_cannot_clear_existing_model_default(hermes_home: Path) -> None:
+def test_cannot_clear_existing_model_default(nastech_home: Path) -> None:
     profile_dir = _seed_profile(
-        hermes_home, "work", {"model": {"provider": "anthropic", "default": "claude-x"}}
+        nastech_home, "work", {"model": {"provider": "anthropic", "default": "claude-x"}}
     )
 
     body = ProfileEditBody(model=ProfileModelEdit(provider="anthropic", default=""))
@@ -127,8 +127,8 @@ def test_cannot_clear_existing_model_default(hermes_home: Path) -> None:
     assert cfg["model"]["default"] == "claude-x"
 
 
-def test_base_url_must_be_http(hermes_home: Path) -> None:
-    _seed_profile(hermes_home, "work", {"model": {"default": "m"}})
+def test_base_url_must_be_http(nastech_home: Path) -> None:
+    _seed_profile(nastech_home, "work", {"model": {"default": "m"}})
 
     body = ProfileEditBody(model=ProfileModelEdit(default="m", base_url="ftp://nope"))
     with pytest.raises(HTTPException) as exc:
@@ -136,8 +136,8 @@ def test_base_url_must_be_http(hermes_home: Path) -> None:
     assert exc.value.status_code == 400
 
 
-def test_update_leaves_no_temp_files(hermes_home: Path) -> None:
-    profile_dir = _seed_profile(hermes_home, "work", {"model": {"default": "m"}})
+def test_update_leaves_no_temp_files(nastech_home: Path) -> None:
+    profile_dir = _seed_profile(nastech_home, "work", {"model": {"default": "m"}})
 
     update_profile_edit(
         "work", ProfileEditBody(model=ProfileModelEdit(default="m2"), soul="hi")

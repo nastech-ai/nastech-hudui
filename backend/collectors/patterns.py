@@ -1,4 +1,4 @@
-"""Collect prompt pattern analytics from Hermes state.db."""
+"""Collect prompt pattern analytics from NasTech state.db."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from .models import (
     TaskCluster,
     ToolWorkflow,
 )
-from .utils import default_hermes_dir, parse_timestamp, safe_get
+from .utils import default_nastech_dir, parse_timestamp, safe_get
 
 # First match wins
 _CLUSTERS = [
@@ -284,17 +284,17 @@ def _do_collect_patterns(db_path: str) -> PatternsState:
     )
 
 
-def collect_patterns(hermes_dir: str | None = None) -> PatternsState:
+def collect_patterns(nastech_dir: str | None = None) -> PatternsState:
     """Collect prompt pattern analytics from state.db (cached)."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir()
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir()
 
-    db_path = Path(hermes_dir) / "state.db"
+    db_path = Path(nastech_dir) / "state.db"
     if not db_path.exists():
         return PatternsState()
 
     return get_cached_or_compute(
-        cache_key=f"patterns:{hermes_dir}",
+        cache_key=f"patterns:{nastech_dir}",
         compute_fn=lambda: _do_collect_patterns(str(db_path)),
         file_paths=[db_path],
         ttl=60,  # 60 second cache

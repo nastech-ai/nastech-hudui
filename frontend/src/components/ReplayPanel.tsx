@@ -438,7 +438,7 @@ function ShareCardPreview({ detail }: { detail: ReplayDetail }) {
     <Panel title="Share Card Preview">
       <div className="aspect-[1200/630] p-4 flex flex-col justify-between" style={{ background: 'var(--hud-bg-deep)', border: '1px solid var(--hud-border)' }}>
         <div>
-          <div className="text-[11px] uppercase tracking-wider" style={{ color: 'var(--hud-primary)' }}>Hermes Replay</div>
+          <div className="text-[11px] uppercase tracking-wider" style={{ color: 'var(--hud-primary)' }}>NasTech Replay</div>
           <div className="mt-2 text-[18px] font-bold leading-tight line-clamp-2" style={{ color: 'var(--hud-text)' }}>{run.title}</div>
           <div className="mt-2 inline-block px-2 py-1 text-[11px] uppercase tracking-wider" style={{ border: '1px solid var(--hud-primary)', color: 'var(--hud-primary)' }}>
             {run.status}
@@ -599,7 +599,7 @@ function RemotePublishPanel() {
           Push published replays to a static host (GitHub Pages). Nothing is uploaded unless you sync.
         </div>
         {([
-          ['repo', 'Repository (owner/name or git URL)', 'joeynyc/hermes-replays'],
+          ['repo', 'Repository (owner/name or git URL)', 'joeynyc/nastech-replays'],
           ['branch', 'Branch', 'gh-pages'],
           ['base_url', 'Base URL (optional, derived for GitHub Pages)', ''],
         ] as Array<[keyof typeof form, string, string]>).map(([key, label, placeholder]) => (

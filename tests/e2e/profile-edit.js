@@ -13,7 +13,7 @@ const initialProfile = {
   provider: 'openai-codex',
   base_url: 'https://chatgpt.com/backend-api/codex',
   port: null,
-  toolsets: ['hermes-cli'],
+  toolsets: ['nastech-cli'],
   skin: 'pirate',
   context_length: 0,
   soul_summary: 'Original soul',
@@ -50,7 +50,7 @@ const initialEdit = {
     api_mode: '',
     context_length: null,
   },
-  toolsets: ['hermes-cli'],
+  toolsets: ['nastech-cli'],
   skin: 'pirate',
   compression: {
     enabled: true,
@@ -71,7 +71,7 @@ async function main() {
 
     await page.addInitScript(() => {
       sessionStorage.setItem('hud-booted', 'true')
-      localStorage.setItem('hermes-hudui-lang', 'en')
+      localStorage.setItem('nastech-hudui-lang', 'en')
     })
 
     await page.route('**/api/dashboard', async () => {
@@ -84,7 +84,7 @@ async function main() {
         contentType: 'application/json',
         body: JSON.stringify({
           providers: ['openai-codex', 'anthropic', 'openrouter', 'zai', 'custom'],
-          toolsets: ['hermes-cli', 'web', 'browser', 'terminal', 'file', 'skills', 'memory'],
+          toolsets: ['nastech-cli', 'web', 'browser', 'terminal', 'file', 'skills', 'memory'],
         }),
       })
     })
@@ -178,7 +178,7 @@ async function main() {
         api_mode: 'messages',
         context_length: 200000,
       },
-      toolsets: ['hermes-cli', 'web', 'browser', 'custom-tools'],
+      toolsets: ['nastech-cli', 'web', 'browser', 'custom-tools'],
       skin: 'blade-runner',
       compression: {
         enabled: true,

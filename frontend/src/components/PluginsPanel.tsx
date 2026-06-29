@@ -187,7 +187,7 @@ export default function PluginsPanel() {
                 </div>
                 {plugin.auth_required && (
                   <div className="mt-2 text-[12px]" style={{ color: 'var(--hud-warning)' }}>
-                    {t('plugins.authRequired')}: <span className="font-mono">{plugin.auth_command || `hermes auth ${plugin.name}`}</span>
+                    {t('plugins.authRequired')}: <span className="font-mono">{plugin.auth_command || `nastech auth ${plugin.name}`}</span>
                   </div>
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -241,7 +241,7 @@ export default function PluginsPanel() {
           {authPlugins.length ? authPlugins.map(plugin => (
             <div key={plugin.name} className="text-[13px]">
               <div style={{ color: 'var(--hud-text)' }}>{plugin.label}</div>
-              <div className="font-mono text-[12px]" style={{ color: 'var(--hud-warning)' }}>{plugin.auth_command || `hermes auth ${plugin.name}`}</div>
+              <div className="font-mono text-[12px]" style={{ color: 'var(--hud-warning)' }}>{plugin.auth_command || `nastech auth ${plugin.name}`}</div>
             </div>
           )) : <div className="text-[13px]" style={{ color: 'var(--hud-text-dim)' }}>{t('plugins.none')}</div>}
         </div>

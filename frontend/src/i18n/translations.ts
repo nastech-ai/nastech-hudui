@@ -1,4 +1,4 @@
-// i18n translations for hermes-hudui
+// i18n translations for nastech-hudui
 
 export const translations = {
   en: {
@@ -52,7 +52,7 @@ export const translations = {
 
     // Providers
     'providers.title': 'OAuth Providers',
-    'providers.subtitle': 'Connected providers from ~/.hermes/auth.json. Read-only — use the hermes CLI to connect or disconnect.',
+    'providers.subtitle': 'Connected providers from ~/.nastech/auth.json. Read-only — use the nastech CLI to connect or disconnect.',
     'providers.loading': 'Loading providers...',
     'providers.none': 'No providers configured.',
     'providers.active': 'ACTIVE',
@@ -73,10 +73,10 @@ export const translations = {
     'gateway.platforms': 'Platforms',
     'gateway.actions': 'Actions',
     'gateway.restart': 'Restart gateway',
-    'gateway.update': 'Update hermes',
-    'gateway.updateDescription': 'Runs hermes update on this machine. Review the last log before updating.',
+    'gateway.update': 'Update nastech',
+    'gateway.updateDescription': 'Runs nastech update on this machine. Review the last log before updating.',
     'gateway.confirmUpdate': 'Confirm update',
-    'gateway.updateConfirmPrompt': 'Click again within 6 seconds to run hermes update.',
+    'gateway.updateConfirmPrompt': 'Click again within 6 seconds to run nastech update.',
     'gateway.lastRun': 'Last run',
     'gateway.neverRun': 'never',
     'gateway.actionSucceeded': 'Succeeded',
@@ -549,15 +549,15 @@ export const translations = {
     'status.commands': 'commands',
 
     // Boot screen
-    'boot.connecting': 'Connecting to Hermes...',
+    'boot.connecting': 'Connecting to NasTech...',
     'boot.ready': 'Ready',
-    'boot.version': 'hermes-hudui',
+    'boot.version': 'nastech-hudui',
 
     // Theme
     'theme.title': 'Theme',
     'theme.scanlines': 'Scanlines',
     'theme.neuralAwakening': 'Neural Awakening',
-    'theme.hermesOfficial': 'Hermes Teal',
+    'theme.nastechOfficial': 'NasTech Teal',
     'theme.bladeRunner': 'Blade Runner',
     'theme.fsociety': 'fsociety',
     'theme.anime': 'Anime',
@@ -618,7 +618,7 @@ export const translations = {
 
     // Providers
     'providers.title': 'OAuth 提供商',
-    'providers.subtitle': '从 ~/.hermes/auth.json 读取的已连接提供商。只读——使用 hermes CLI 来连接或断开。',
+    'providers.subtitle': '从 ~/.nastech/auth.json 读取的已连接提供商。只读——使用 nastech CLI 来连接或断开。',
     'providers.loading': '正在加载提供商...',
     'providers.none': '未配置提供商。',
     'providers.active': '活跃',
@@ -639,10 +639,10 @@ export const translations = {
     'gateway.platforms': '平台',
     'gateway.actions': '操作',
     'gateway.restart': '重启网关',
-    'gateway.update': '更新 hermes',
-    'gateway.updateDescription': '在本机运行 hermes update。更新前请查看上次日志。',
+    'gateway.update': '更新 nastech',
+    'gateway.updateDescription': '在本机运行 nastech update。更新前请查看上次日志。',
     'gateway.confirmUpdate': '确认更新',
-    'gateway.updateConfirmPrompt': '在 6 秒内再次点击以运行 hermes update。',
+    'gateway.updateConfirmPrompt': '在 6 秒内再次点击以运行 nastech update。',
     'gateway.lastRun': '上次运行',
     'gateway.neverRun': '从未',
     'gateway.actionSucceeded': '成功',
@@ -1114,15 +1114,15 @@ export const translations = {
     'status.commands': '命令',
 
     // Boot screen
-    'boot.connecting': '正在连接 Hermes...',
+    'boot.connecting': '正在连接 NasTech...',
     'boot.ready': '就绪',
-    'boot.version': 'hermes-hudui',
+    'boot.version': 'nastech-hudui',
 
     // Theme
     'theme.title': '主题',
     'theme.scanlines': '扫描线',
     'theme.neuralAwakening': '神经网络',
-    'theme.hermesOfficial': 'Hermes 青绿',
+    'theme.nastechOfficial': 'NasTech 青绿',
     'theme.bladeRunner': '银翼杀手',
     'theme.fsociety': '黑客帝国',
     'theme.anime': '动漫',

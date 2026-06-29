@@ -1,10 +1,10 @@
 """Tests for the cron mutation API (backend/api/cron.py).
 
-Cron create/delete shell out to the ``hermes`` CLI rather than writing
+Cron create/delete shell out to the ``nastech`` CLI rather than writing
 ``jobs.json`` directly, so the surface this module owns — and the part worth
 guarding — is argv construction, input validation (non-empty schedule,
 positive repeat, absolute workdir), and subprocess error propagation. The
-``hermes`` binary is faked so nothing real is scheduled.
+``nastech`` binary is faked so nothing real is scheduled.
 """
 
 from __future__ import annotations
@@ -24,8 +24,8 @@ class _FakeCompleted:
 
 @pytest.fixture
 def captured_calls(monkeypatch):
-    """Pretend the hermes CLI exists; capture each subprocess invocation."""
-    monkeypatch.setattr(cron, "_HERMES_BIN", "/usr/bin/hermes")
+    """Pretend the nastech CLI exists; capture each subprocess invocation."""
+    monkeypatch.setattr(cron, "_NASTECH_BIN", "/usr/bin/nastech")
     calls: list[tuple[list[str], dict]] = []
 
     def fake_run(cmd, **kwargs):
@@ -41,7 +41,7 @@ def test_create_builds_minimal_command(captured_calls) -> None:
     assert result == {"status": "ok"}
 
     cmd, kwargs = captured_calls[0]
-    assert cmd == ["/usr/bin/hermes", "cron", "create", "@daily"]
+    assert cmd == ["/usr/bin/nastech", "cron", "create", "@daily"]
     assert kwargs.get("timeout") == 10
     assert kwargs.get("capture_output") is True
 
@@ -62,7 +62,7 @@ def test_create_builds_full_command_in_order(captured_calls) -> None:
 
     cmd, _ = captured_calls[0]
     assert cmd == [
-        "/usr/bin/hermes",
+        "/usr/bin/nastech",
         "cron",
         "create",
         "--name",
@@ -106,7 +106,7 @@ def test_create_rejects_relative_workdir(captured_calls) -> None:
 
 
 def test_create_propagates_cli_failure(monkeypatch) -> None:
-    monkeypatch.setattr(cron, "_HERMES_BIN", "/usr/bin/hermes")
+    monkeypatch.setattr(cron, "_NASTECH_BIN", "/usr/bin/nastech")
     monkeypatch.setattr(
         cron.subprocess,
         "run",
@@ -123,11 +123,11 @@ def test_delete_builds_remove_command(captured_calls) -> None:
     assert result == {"status": "ok"}
 
     cmd, _ = captured_calls[0]
-    assert cmd == ["/usr/bin/hermes", "cron", "remove", "job_42"]
+    assert cmd == ["/usr/bin/nastech", "cron", "remove", "job_42"]
 
 
 def test_delete_propagates_cli_failure(monkeypatch) -> None:
-    monkeypatch.setattr(cron, "_HERMES_BIN", "/usr/bin/hermes")
+    monkeypatch.setattr(cron, "_NASTECH_BIN", "/usr/bin/nastech")
     monkeypatch.setattr(
         cron.subprocess,
         "run",
@@ -139,8 +139,8 @@ def test_delete_propagates_cli_failure(monkeypatch) -> None:
     assert "no such job" in exc.value.detail
 
 
-def test_missing_hermes_binary_returns_503(monkeypatch) -> None:
-    monkeypatch.setattr(cron, "_HERMES_BIN", None)
+def test_missing_nastech_binary_returns_503(monkeypatch) -> None:
+    monkeypatch.setattr(cron, "_NASTECH_BIN", None)
     with pytest.raises(HTTPException) as exc:
         create_job(CreateCronBody(schedule="@daily"))
     assert exc.value.status_code == 503

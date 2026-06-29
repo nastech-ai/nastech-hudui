@@ -1,4 +1,4 @@
-"""CLI-based chat engine using hermes subprocess."""
+"""CLI-based chat engine using nastech subprocess."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from backend.collectors.utils import default_hermes_dir, load_yaml
+from backend.collectors.utils import default_nastech_dir, load_yaml
 from .models import (
     ChatSession,
     ComposerState,
@@ -23,20 +23,20 @@ from .models import (
 )
 from .streamer import ChatStreamer
 
-# Regex to match box-drawing decoration lines from hermes CLI output
+# Regex to match box-drawing decoration lines from nastech CLI output
 _BOX_DRAWING_RE = re.compile(r'^[\s\r]*[╭╮╰╯│─┌┐└┘├┤┬┴┼◉◈●▸▹▶▷■□▪▫]+[\s─╭╮╰╯│┌┐└┘├┤┬┴┼]*$')
 # Lines starting with a box border character — top/bottom borders or panel content
 _BOX_BORDER_START_RE = re.compile(r'^[\s\r]*[╭╰┌└]─')
 _BOX_CONTENT_RE = re.compile(r'^[\s\r]*│(.*)│[\s\r]*$')
 _SESSION_ID_RE = re.compile(r'^session_id:\s+(\S+)')
-_HEADER_RE = re.compile(r'[╭╰][\s─]*[◉◈●]?\s*(MOTHER|HERMES|hermes)\s*[─╮╯]')
-# Hermes system warning lines (context compression, etc.) — not part of the model response
+_HEADER_RE = re.compile(r'[╭╰][\s─]*[◉◈●]?\s*(MOTHER|NASTECH|nastech)\s*[─╮╯]')
+# NasTech system warning lines (context compression, etc.) — not part of the model response
 _WARNING_RE = re.compile(r'^⚠')
 
 
-def _emit_tool_events(streamer: "ChatStreamer", hermes_session_id: str) -> None:
-    """Query state.db for tool calls and reasoning from the hermes session and emit SSE events."""
-    db_path = Path(default_hermes_dir()) / "state.db"
+def _emit_tool_events(streamer: "ChatStreamer", nastech_session_id: str) -> None:
+    """Query state.db for tool calls and reasoning from the nastech session and emit SSE events."""
+    db_path = Path(default_nastech_dir()) / "state.db"
     try:
         conn = sqlite3.connect(str(db_path))
         conn.row_factory = sqlite3.Row
@@ -46,7 +46,7 @@ def _emit_tool_events(streamer: "ChatStreamer", hermes_session_id: str) -> None:
                    WHERE session_id = ?
                      AND (tool_calls IS NOT NULL OR (reasoning IS NOT NULL AND reasoning != ''))
                    ORDER BY timestamp ASC""",
-                (hermes_session_id,),
+                (nastech_session_id,),
             ).fetchall()
         finally:
             conn.close()
@@ -89,7 +89,7 @@ class ChatNotAvailableError(Exception):
 
 
 class ChatEngine:
-    """Chat engine using hermes CLI subprocess with -q (query) and -Q (quiet) flags."""
+    """Chat engine using nastech CLI subprocess with -q (query) and -Q (quiet) flags."""
 
     _instance: Optional["ChatEngine"] = None
     _lock = threading.Lock()
@@ -112,16 +112,16 @@ class ChatEngine:
         self._run_state: dict[str, dict[str, float | str | None]] = {}
         self._run_history: dict[str, list[dict[str, int | bool | str | None]]] = {}
         self._initialized = True
-        self._hermes_path = shutil.which("hermes")
+        self._nastech_path = shutil.which("nastech")
         self._cli_available = self._check_cli()
 
     def _check_cli(self) -> bool:
-        """Check if hermes CLI is available."""
-        if not self._hermes_path:
+        """Check if nastech CLI is available."""
+        if not self._nastech_path:
             return False
         try:
             result = subprocess.run(
-                [self._hermes_path, "--version"], capture_output=True, timeout=5
+                [self._nastech_path, "--version"], capture_output=True, timeout=5
             )
             return result.returncode == 0
         except Exception:
@@ -132,12 +132,12 @@ class ChatEngine:
         return self._cli_available
 
     def _configured_model(self, profile: Optional[str] = None) -> str:
-        """Return the configured Hermes model for the default or named profile."""
-        hermes_path = Path(default_hermes_dir())
+        """Return the configured NasTech model for the default or named profile."""
+        nastech_path = Path(default_nastech_dir())
         if profile and profile != "default":
-            hermes_path = hermes_path / "profiles" / profile
+            nastech_path = nastech_path / "profiles" / profile
 
-        config_path = hermes_path / "config.yaml"
+        config_path = nastech_path / "config.yaml"
         if not config_path.exists():
             return "unknown"
 
@@ -160,7 +160,7 @@ class ChatEngine:
         """Create a new chat session."""
         if not self._cli_available:
             raise ChatNotAvailableError(
-                "Hermes CLI not available. Run: pip install 'hermes-hudui[chat]'  "
+                "NasTech CLI not available. Run: pip install 'nastech-hudui[chat]'  "
                 "(quotes required in zsh)"
             )
 
@@ -211,7 +211,7 @@ class ChatEngine:
         session_id: str,
         content: str,
     ) -> ChatStreamer:
-        """Send a message using hermes chat -q -Q and stream stdout."""
+        """Send a message using nastech chat -q -Q and stream stdout."""
         session = self._sessions.get(session_id)
         if not session:
             raise ChatNotAvailableError(f"Session {session_id} not found")
@@ -235,22 +235,22 @@ class ChatEngine:
         session.message_count += 1
         session.last_activity = datetime.now()
         self._run_state[session_id] = {
-            "status": "starting_hermes",
+            "status": "starting_nastech",
             "started_at": time.monotonic(),
             "process_started_at": None,
             "first_token_at": None,
             "finished_at": None,
-            "resumed": bool(session.hermes_session_id),
+            "resumed": bool(session.nastech_session_id),
         }
 
-        # Build command: hermes chat -q "message" -Q (quiet mode)
-        cmd = [self._hermes_path, "chat", "-q", content, "-Q"]
+        # Build command: nastech chat -q "message" -Q (quiet mode)
+        cmd = [self._nastech_path, "chat", "-q", content, "-Q"]
         if session.profile:
             cmd.extend(["--profile", session.profile])
         if session.model:
             cmd.extend(["-m", session.model])
-        if session.hermes_session_id:
-            cmd.extend(["--resume", session.hermes_session_id])
+        if session.nastech_session_id:
+            cmd.extend(["--resume", session.nastech_session_id])
         # Tag as tool source so it doesn't clutter user session list
         cmd.extend(["--source", "tool"])
 
@@ -293,7 +293,7 @@ class ChatEngine:
                 in_warning_block = False
                 line_buf = b""
 
-                # hermes v0.10+ prints "session_id: <ID>" to stderr so stdout
+                # nastech v0.10+ prints "session_id: <ID>" to stderr so stdout
                 # stays clean for piping. Drain stderr concurrently — pull the
                 # session_id line out and keep the rest for error reporting.
                 captured_session_id: list[str] = []
@@ -375,20 +375,20 @@ class ChatEngine:
                 process.wait()
                 stderr_thread.join(timeout=2)
 
-                hermes_session_id = captured_session_id[0] if captured_session_id else None
-                if hermes_session_id:
-                    session.hermes_session_id = hermes_session_id
+                nastech_session_id = captured_session_id[0] if captured_session_id else None
+                if nastech_session_id:
+                    session.nastech_session_id = nastech_session_id
 
                 # Emit tool calls and reasoning from state.db
-                if hermes_session_id and not streamer._stopped.is_set():
+                if nastech_session_id and not streamer._stopped.is_set():
                     if session_id in self._run_state:
                         self._run_state[session_id]["status"] = "finalizing_tools"
-                    _emit_tool_events(streamer, hermes_session_id)
+                    _emit_tool_events(streamer, nastech_session_id)
 
                 if process.returncode != 0:
                     if session_id in self._run_state:
                         self._run_state[session_id]["status"] = "error"
-                    error_detail = "\n".join(stderr_lines) or f"hermes exited with code {process.returncode}"
+                    error_detail = "\n".join(stderr_lines) or f"nastech exited with code {process.returncode}"
                     streamer.emit_error("CLI error: " + error_detail)
                 else:
                     if session_id in self._run_state:
@@ -398,7 +398,7 @@ class ChatEngine:
             except Exception as e:
                 if session_id in self._run_state:
                     self._run_state[session_id]["status"] = "error"
-                streamer.emit_error(f"Failed to run hermes: {e}")
+                streamer.emit_error(f"Failed to run nastech: {e}")
             finally:
                 if session_id in self._run_state:
                     self._run_state[session_id]["finished_at"] = time.monotonic()

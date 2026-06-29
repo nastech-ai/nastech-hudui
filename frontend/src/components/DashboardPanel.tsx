@@ -84,7 +84,7 @@ function IdentityBlock({ state, health }: { state: any; health: any }) {
 
   return (
     <div className="text-[13px] space-y-1 mb-4 p-3" style={{ background: 'var(--hud-bg-panel)', borderLeft: '3px solid var(--hud-primary)' }}>
-      <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.designation')}</span>  <span className="font-bold gradient-text">HERMES</span></div>
+      <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.designation')}</span>  <span className="font-bold gradient-text">NASTECH</span></div>
       <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.substrate')}</span>  {config?.provider || '?'}/{config?.model || '?'}</div>
       <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.runtime')}</span>  {config?.backend || '—'}</div>
       {days > 0 && <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.conscious')}</span>  {days} {t('dashboard.days')} <span style={{ color: 'var(--hud-text-dim)' }}>{t('dashboard.since')} {new Date(dr![0]).toLocaleDateString()}</span></div>}

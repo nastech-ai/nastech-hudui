@@ -1,4 +1,4 @@
-"""Data models for Hermes HUD."""
+"""Data models for NasTech HUD."""
 
 from __future__ import annotations
 

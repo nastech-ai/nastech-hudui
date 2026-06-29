@@ -13,7 +13,7 @@ interface ComposerProps {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  starting_hermes: 'starting Hermes',
+  starting_nastech: 'starting NasTech',
   connecting_model: 'connecting model',
   streaming: 'streaming',
   finalizing_tools: 'finalizing tools',

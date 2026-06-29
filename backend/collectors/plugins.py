@@ -1,4 +1,4 @@
-"""Collect Hermes plugin and dashboard extension metadata."""
+"""Collect NasTech plugin and dashboard extension metadata."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import PluginInfo, PluginsState
-from .utils import default_hermes_dir, load_yaml
+from .utils import default_nastech_dir, load_yaml
 
 try:
     import yaml as _yaml
@@ -120,12 +120,12 @@ def _plugin_from_dir(plugin_dir: Path, source: str) -> PluginInfo | None:
 
 
 def _candidate_dirs(
-    hermes_dir: str,
+    nastech_dir: str,
     bundled_plugins_dir: str | None,
     project_dir: str | None,
     include_project_plugins: bool,
 ) -> list[tuple[Path, str]]:
-    dirs: list[tuple[Path, str]] = [(Path(hermes_dir) / "plugins", "user")]
+    dirs: list[tuple[Path, str]] = [(Path(nastech_dir) / "plugins", "user")]
 
     if bundled_plugins_dir:
         bundled_root = Path(bundled_plugins_dir)
@@ -138,13 +138,13 @@ def _candidate_dirs(
                 break
 
     if include_project_plugins and project_dir:
-        dirs.append((Path(project_dir) / ".hermes" / "plugins", "project"))
+        dirs.append((Path(project_dir) / ".nastech" / "plugins", "project"))
 
     return dirs
 
 
 def collect_plugins(
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
     bundled_plugins_dir: str | None = None,
     project_dir: str | None = None,
     include_project_plugins: bool | None = None,
@@ -152,11 +152,11 @@ def collect_plugins(
     """Discover installed plugin metadata.
 
     User plugins take precedence over bundled/project plugins with the same
-    manifest name, matching Hermes' dashboard discovery behavior.
+    manifest name, matching NasTech' dashboard discovery behavior.
     """
-    hermes_dir = default_hermes_dir(hermes_dir)
+    nastech_dir = default_nastech_dir(nastech_dir)
     if include_project_plugins is None:
-        include_project_plugins = bool(os.environ.get("HERMES_ENABLE_PROJECT_PLUGINS"))
+        include_project_plugins = bool(os.environ.get("NASTECH_ENABLE_PROJECT_PLUGINS"))
     if project_dir is None:
         project_dir = os.getcwd()
 
@@ -164,7 +164,7 @@ def collect_plugins(
     seen: set[str] = set()
 
     for root, source in _candidate_dirs(
-        hermes_dir,
+        nastech_dir,
         bundled_plugins_dir,
         project_dir,
         include_project_plugins,
@@ -189,9 +189,9 @@ def _validate_plugin_name(name: str) -> str:
     return name
 
 
-def _find_user_plugin(name: str, hermes_dir: str | None = None) -> Path:
+def _find_user_plugin(name: str, nastech_dir: str | None = None) -> Path:
     name = _validate_plugin_name(name)
-    plugin_dir = Path(default_hermes_dir(hermes_dir)) / "plugins" / name
+    plugin_dir = Path(default_nastech_dir(nastech_dir)) / "plugins" / name
     if not plugin_dir.is_dir():
         raise FileNotFoundError(f"User plugin not found: {name}")
     return plugin_dir
@@ -200,10 +200,10 @@ def _find_user_plugin(name: str, hermes_dir: str | None = None) -> Path:
 def set_plugin_enabled(
     name: str,
     enabled: bool,
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
 ) -> dict[str, Any]:
     """Enable or disable a user plugin by updating its manifest."""
-    plugin_dir = _find_user_plugin(name, hermes_dir)
+    plugin_dir = _find_user_plugin(name, nastech_dir)
     for filename in ("plugin.yaml", "plugin.yml"):
         path = plugin_dir / filename
         if path.exists():
@@ -225,10 +225,10 @@ def set_plugin_enabled(
 def set_dashboard_plugin_hidden(
     name: str,
     hidden: bool,
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
 ) -> dict[str, Any]:
     """Hide or show a user dashboard plugin tab by updating its manifest."""
-    plugin_dir = _find_user_plugin(name, hermes_dir)
+    plugin_dir = _find_user_plugin(name, nastech_dir)
     path = plugin_dir / "dashboard" / "manifest.json"
     if not path.exists():
         raise FileNotFoundError(f"Dashboard manifest not found: {name}")
@@ -249,15 +249,15 @@ def _plugin_name_from_identifier(identifier: str) -> str:
 
 def install_plugin(
     identifier: str,
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
     runner=subprocess.run,
 ) -> dict[str, Any]:
-    """Install a plugin from a git URL/path into ~/.hermes/plugins."""
+    """Install a plugin from a git URL/path into ~/.nastech/plugins."""
     identifier = identifier.strip()
     if not identifier:
         raise ValueError("Plugin identifier is required")
     name = _plugin_name_from_identifier(identifier)
-    plugins_dir = Path(default_hermes_dir(hermes_dir)) / "plugins"
+    plugins_dir = Path(default_nastech_dir(nastech_dir)) / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
     destination = plugins_dir / name
     if destination.exists():
@@ -276,11 +276,11 @@ def install_plugin(
 
 def update_plugin(
     name: str,
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
     runner=subprocess.run,
 ) -> dict[str, Any]:
     """Update a user-installed git plugin with fast-forward pull."""
-    plugin_dir = _find_user_plugin(name, hermes_dir)
+    plugin_dir = _find_user_plugin(name, nastech_dir)
     if not (plugin_dir / ".git").exists():
         raise RuntimeError(f"Plugin is not git-backed: {name}")
     result = runner(

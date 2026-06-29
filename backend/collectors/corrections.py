@@ -1,4 +1,4 @@
-"""Collect correction events — times Hermes was wrong and learned from it."""
+"""Collect correction events — times NasTech was wrong and learned from it."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from .utils import default_hermes_dir, safe_get
+from .utils import default_nastech_dir, safe_get
 
 
 @dataclass
@@ -67,11 +67,11 @@ SESSION_KEYWORDS = [
 ]
 
 
-def _extract_memory_corrections(hermes_dir: str) -> list[Correction]:
+def _extract_memory_corrections(nastech_dir: str) -> list[Correction]:
     """Extract corrections from memory files."""
     from .memory import collect_memory
 
-    memory_state, user_state = collect_memory(hermes_dir)
+    memory_state, user_state = collect_memory(nastech_dir)
     corrections = []
 
     for state, source in [(memory_state, "memory"), (user_state, "user")]:
@@ -95,10 +95,10 @@ def _extract_memory_corrections(hermes_dir: str) -> list[Correction]:
     return corrections
 
 
-def _extract_session_corrections(hermes_dir: str) -> list[Correction]:
+def _extract_session_corrections(nastech_dir: str) -> list[Correction]:
     """Mine session transcripts for correction events."""
     corrections = []
-    db_path = Path(hermes_dir) / "state.db"
+    db_path = Path(nastech_dir) / "state.db"
 
     if not db_path.exists():
         return corrections
@@ -161,13 +161,13 @@ def _extract_session_corrections(hermes_dir: str) -> list[Correction]:
     return corrections
 
 
-def collect_corrections(hermes_dir: str | None = None) -> CorrectionsState:
+def collect_corrections(nastech_dir: str | None = None) -> CorrectionsState:
     """Collect all correction events."""
-    hermes_dir = default_hermes_dir(hermes_dir)
+    nastech_dir = default_nastech_dir(nastech_dir)
 
     corrections = []
-    corrections.extend(_extract_memory_corrections(hermes_dir))
-    corrections.extend(_extract_session_corrections(hermes_dir))
+    corrections.extend(_extract_memory_corrections(nastech_dir))
+    corrections.extend(_extract_session_corrections(nastech_dir))
 
     # Sort: timestamped first (newest), then un-timestamped
     corrections.sort(key=lambda c: (

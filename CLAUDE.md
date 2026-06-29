@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Hermes HUD Web UI — a browser-based dashboard for monitoring the Hermes AI agent. It reads agent data from `~/.hermes/` and displays identity, memory, skills, sessions, cron jobs, projects, costs, activity patterns, corrections, sudo governance, live chat, OAuth providers, gateway control, and live model capabilities across 19 tabs.
+NasTech HUD Web UI — a browser-based dashboard for monitoring the NasTech AI agent. It reads agent data from `~/.nastech/` and displays identity, memory, skills, sessions, cron jobs, projects, costs, activity patterns, corrections, sudo governance, live chat, OAuth providers, gateway control, and live model capabilities across 19 tabs.
 
 ## Commands
 
@@ -15,7 +15,7 @@ Hermes HUD Web UI — a browser-based dashboard for monitoring the Hermes AI age
 
 ### Full-Stack Dev
 ```bash
-hermes-hudui --dev          # Terminal 1: backend on :3001 (auto-reload)
+nastech-hudui --dev          # Terminal 1: backend on :3001 (auto-reload)
 cd frontend && npm run dev  # Terminal 2: frontend on :5173 (proxies /api → :3001)
 ```
 
@@ -30,9 +30,9 @@ npm run preview  # Preview production build
 
 ### Backend CLI
 ```bash
-hermes-hudui                         # Serve on :3001
-hermes-hudui --port 8080             # Custom port
-hermes-hudui --hermes-dir /path      # Override ~/.hermes/ location
+nastech-hudui                         # Serve on :3001
+nastech-hudui --port 8080             # Custom port
+nastech-hudui --nastech-dir /path      # Override ~/.nastech/ location
 ```
 
 ### Release Workflow
@@ -54,23 +54,23 @@ React Frontend (Vite + Tailwind)
     ↓ /api/* (proxied in dev)
 FastAPI Backend (Python)
     ↓ collectors/*.py        ↓ chat/engine.py
-~/.hermes/ (agent data)     hermes CLI (subprocess)
+~/.nastech/ (agent data)     nastech CLI (subprocess)
 ```
 
 ### Backend (`backend/`)
 
-- **`main.py`** — FastAPI app + CLI entry point. Sets `HERMES_HOME`, starts Uvicorn.
-- **`collectors/`** — One module per data domain (memory, skills, sessions, cron, projects, patterns, sudo). Each reads `~/.hermes/` and returns dataclasses from `models.py`.
+- **`main.py`** — FastAPI app + CLI entry point. Sets `NASTECH_HOME`, starts Uvicorn.
+- **`collectors/`** — One module per data domain (memory, skills, sessions, cron, projects, patterns, sudo). Each reads `~/.nastech/` and returns dataclasses from `models.py`.
 - **`models.py`** — All dataclasses (`HUDState`, `MemoryState`, `SkillsState`, etc.). `@property` fields are included in serialization.
 - **`serialize.py`** — `to_dict()` recursively converts dataclasses to JSON-safe dicts.
 - **`routes/`** — FastAPI route handlers that call collectors and return serialized data.
-- **`api/memory.py`** — CRUD endpoints for memory editing. Uses `fcntl.flock` + atomic writes (`tempfile.mkstemp` → `os.replace`) matching hermes-agent's `MemoryStore` locking pattern.
+- **`api/memory.py`** — CRUD endpoints for memory editing. Uses `fcntl.flock` + atomic writes (`tempfile.mkstemp` → `os.replace`) matching nastech-agent's `MemoryStore` locking pattern.
 - **`api/sessions.py`** — Session search (title + FTS). Filters `source != 'tool'` to exclude HUD-generated sessions.
 - **`api/chat.py`** — Chat session CRUD, SSE streaming endpoint, cancel endpoint.
-- **`chat/engine.py`** — Singleton `ChatEngine` spawning `hermes chat -q <msg> -Q --source tool` per message. Captures `hermes_session_id` from stdout, queries `state.db` post-completion for tool calls and reasoning.
+- **`chat/engine.py`** — Singleton `ChatEngine` spawning `nastech chat -q <msg> -Q --source tool` per message. Captures `nastech_session_id` from stdout, queries `state.db` post-completion for tool calls and reasoning.
 - **`chat/streamer.py`** — SSE event emitter (`emit_token`, `emit_tool_start`, `emit_tool_end`, `emit_reasoning`, `emit_done`).
 - **`cache.py`** — Mtime-based cache invalidation (sessions 30s, skills 60s, patterns 60s, profiles 45s). Endpoints: `GET /api/cache/stats`, `POST /api/cache/clear`.
-- **`websocket.py`** — Watches `~/.hermes/` via `watchfiles`, broadcasts `data_changed` events. Frontend auto-refreshes via SWR mutation.
+- **`websocket.py`** — Watches `~/.nastech/` via `watchfiles`, broadcasts `data_changed` events. Frontend auto-refreshes via SWR mutation.
 
 ### Frontend (`frontend/src/`)
 

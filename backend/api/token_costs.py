@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import APIRouter
 
-from backend.collectors.utils import default_hermes_dir
+from backend.collectors.utils import default_nastech_dir
 
 try:
     router = APIRouter()
@@ -207,8 +207,8 @@ def _finalize_bucket(bucket: dict) -> dict:
 @router.get("/token-costs")
 async def get_token_costs():
     """Token usage and estimated costs, broken down by model."""
-    hermes_dir = default_hermes_dir()
-    db_path = str(Path(hermes_dir) / "state.db")
+    nastech_dir = default_nastech_dir()
+    db_path = str(Path(nastech_dir) / "state.db")
 
     if not Path(db_path).exists():
         return {"error": "state.db not found"}

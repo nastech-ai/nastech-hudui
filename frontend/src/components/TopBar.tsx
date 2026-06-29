@@ -92,7 +92,7 @@ export default function TopBar({ activeTab, onTabChange }: TopBarProps) {
          style={{ borderColor: 'var(--hud-border)', background: 'var(--hud-bg-surface)' }}>
       {/* Logo */}
       <span className="gradient-text font-bold text-[13px] mr-3 tracking-wider cursor-pointer shrink-0"
-            onClick={() => onTabChange('dashboard')}>☤ HERMES</span>
+            onClick={() => onTabChange('dashboard')}>☤ NASTECH</span>
 
       {/* Tabs */}
       <div

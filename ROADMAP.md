@@ -1,4 +1,4 @@
-# Hermes HUD — Roadmap
+# NasTech HUD — Roadmap
 
 A record of everything built, day by day.
 
@@ -6,12 +6,12 @@ A record of everything built, day by day.
 
 ## Foundation (Pre-Day 1)
 
-The initial release established the core architecture: a FastAPI backend reading `~/.hermes/` and a React + Vite + Tailwind frontend. No framework dependencies on hermes-agent internals — the HUD vendors its own collectors.
+The initial release established the core architecture: a FastAPI backend reading `~/.nastech/` and a React + Vite + Tailwind frontend. No framework dependencies on nastech-agent internals — the HUD vendors its own collectors.
 
 **What shipped:**
 - Dashboard with identity, memory bars, service health, skills, projects, cron jobs, tool usage, daily sparkline
 - 11 read-only tabs — Memory, Skills, Sessions, Cron, Projects, Health, Agents, Profiles, Costs, Corrections, Patterns
-- WebSocket real-time updates — `watchfiles` watches `~/.hermes/` and broadcasts `data_changed` to all clients
+- WebSocket real-time updates — `watchfiles` watches `~/.nastech/` and broadcasts `data_changed` to all clients
 - Smart mtime-based caching — avoids re-reading files that haven't changed
 - Four themes — Neural Awakening, Blade Runner, fsociety, Anime
 - CRT scanline overlay
@@ -26,7 +26,7 @@ The initial release established the core architecture: a FastAPI backend reading
 Wired up the chat engine and surfaced two previously hidden tabs.
 
 **What shipped:**
-- Live chat with Hermes agent via `hermes chat -q <msg> -Q --source tool` subprocess
+- Live chat with NasTech agent via `nastech chat -q <msg> -Q --source tool` subprocess
 - Multiple independent sessions, each with isolated message history
 - SSE streaming — responses appear in real time
 - Corrections tab — corrections grouped by severity (critical / major / minor)
@@ -67,7 +67,7 @@ Surfaced what the agent is actually doing while it thinks.
 **What shipped:**
 - Tool call cards — after a response finishes, cards show each tool used (web_search, terminal, etc.) with arguments and status
 - Reasoning blocks — agent thinking/extended reasoning appears as a collapsible "Thinking" section
-- Tool call data read from `state.db` post-completion using the hermes session ID captured from stdout
+- Tool call data read from `state.db` post-completion using the nastech session ID captured from stdout
 
 ---
 
@@ -78,8 +78,8 @@ Added the first write capability — the HUD was previously read-only.
 - Inline edit and delete entries in the Memory tab (Agent Memory and User Profile)
 - Add new entries via expandable form
 - Two-click delete confirmation
-- File locking (`fcntl.flock`) + atomic writes (`tempfile.mkstemp` → `os.replace`) matching hermes-agent's own locking pattern
-- No direct JSON writes — entries use hermes's `\n§\n` delimiter format
+- File locking (`fcntl.flock`) + atomic writes (`tempfile.mkstemp` → `os.replace`) matching nastech-agent's own locking pattern
+- No direct JSON writes — entries use nastech's `\n§\n` delimiter format
 
 ---
 
@@ -91,7 +91,7 @@ Added the first write capability — the HUD was previously read-only.
 - On server restart: ChatPanel detects missing backend sessions, re-creates them, migrates message keys from old to new IDs automatically
 
 ### Streaming Bug Fixes
-- Fixed stuck streaming — warning block filter was swallowing the first response line (hermes outputs content immediately after the warning with no blank line separator)
+- Fixed stuck streaming — warning block filter was swallowing the first response line (nastech outputs content immediately after the warning with no blank line separator)
 - Fixed stale closure in SSE `onerror` handler — `isStreaming` captured at creation time meant cleanup never ran
 - Heartbeat SSE comment every 15s keeps connections alive through proxies
 
@@ -109,7 +109,7 @@ Made the Cron tab interactive — jobs can now be controlled without touching th
 - **Run Now** — triggers immediate execution on the next scheduler tick
 - **Delete** — removes the job permanently (two-click confirmation)
 - Buttons adapt to job state: Pause/Resume toggle, Run hidden for completed/paused jobs
-- Delegated to `hermes cron pause|resume|remove|run <job_id>` CLI — avoids racing with the scheduler's own file writes (hermes's `save_jobs()` has no file locking)
+- Delegated to `nastech cron pause|resume|remove|run <job_id>` CLI — avoids racing with the scheduler's own file writes (nastech's `save_jobs()` has no file locking)
 - End-to-end tested via Playwright against live jobs
 
 ---
@@ -154,4 +154,4 @@ These are possibilities, not commitments.
 - **Export** — download session transcripts or memory snapshots as markdown
 - **Mobile layout** — responsive polish for small screens
 - **Dark/light mode** — fifth theme option using system preference
-- **Multi-agent** — support for switching between multiple hermes profiles in the chat tab
+- **Multi-agent** — support for switching between multiple nastech profiles in the chat tab

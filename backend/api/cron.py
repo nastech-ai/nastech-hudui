@@ -14,23 +14,23 @@ from .serialize import to_dict
 
 router = APIRouter()
 
-_HERMES_BIN: str | None = shutil.which("hermes")
+_NASTECH_BIN: str | None = shutil.which("nastech")
 
 
-def _hermes() -> str:
-    if not _HERMES_BIN:
-        raise HTTPException(status_code=503, detail="hermes CLI not found")
-    return _HERMES_BIN
+def _nastech() -> str:
+    if not _NASTECH_BIN:
+        raise HTTPException(status_code=503, detail="nastech CLI not found")
+    return _NASTECH_BIN
 
 
 def _run(action: str, job_id: str) -> None:
     result = subprocess.run(
-        [_hermes(), "cron", action, job_id],
+        [_nastech(), "cron", action, job_id],
         capture_output=True,
         timeout=10,
     )
     if result.returncode != 0:
-        detail = result.stderr.decode(errors="replace").strip() or f"hermes cron {action} failed"
+        detail = result.stderr.decode(errors="replace").strip() or f"nastech cron {action} failed"
         raise HTTPException(status_code=500, detail=detail)
 
 
@@ -70,7 +70,7 @@ def _run_create(body: CreateCronBody) -> None:
     if workdir and not Path(workdir).is_absolute():
         raise HTTPException(status_code=400, detail="workdir must be an absolute path")
 
-    cmd = [_hermes(), "cron", "create"]
+    cmd = [_nastech(), "cron", "create"]
     if name:
         cmd.extend(["--name", name])
     if deliver:
@@ -93,7 +93,7 @@ def _run_create(body: CreateCronBody) -> None:
         timeout=10,
     )
     if result.returncode != 0:
-        detail = result.stderr.decode(errors="replace").strip() or "hermes cron create failed"
+        detail = result.stderr.decode(errors="replace").strip() or "nastech cron create failed"
         raise HTTPException(status_code=500, detail=detail)
 
 
@@ -104,7 +104,7 @@ async def get_cron():
 
 @router.post("/cron")
 def create_job(body: CreateCronBody):
-    # Trust boundary: creating cron jobs can schedule Hermes to run in arbitrary workdirs.
+    # Trust boundary: creating cron jobs can schedule NasTech to run in arbitrary workdirs.
     # Keep this HUD API bound to trusted localhost-only access.
     _run_create(body)
     return {"status": "ok"}

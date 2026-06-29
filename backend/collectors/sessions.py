@@ -1,4 +1,4 @@
-"""Collect session data from Hermes state.db."""
+"""Collect session data from NasTech state.db."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 from ..cache import get_cached_or_compute
 from .models import DailyStats, SessionInfo, SessionsState
-from .utils import default_hermes_dir, safe_get
+from .utils import default_nastech_dir, safe_get
 
 
 def _extract_tool_usage(db_path: str) -> dict[str, int]:
@@ -51,7 +51,7 @@ def _optional_column(columns: set[str], name: str, default: str = "NULL") -> str
 
 
 def _human_session_where(columns: set[str]) -> str:
-    """Filter to user-facing sessions, matching Hermes' current deny-list."""
+    """Filter to user-facing sessions, matching NasTech' current deny-list."""
     clauses = ["LOWER(COALESCE(source, '')) != 'tool'"]
     if {"parent_session_id", "end_reason"}.issubset(columns):
         clauses.append("""
@@ -69,7 +69,7 @@ def _human_session_where(columns: set[str]) -> str:
 
 
 def _compression_tip(conn: sqlite3.Connection, session_id: str) -> str:
-    """Mirror Hermes' compression-chain projection for session lists."""
+    """Mirror NasTech' compression-chain projection for session lists."""
     current = session_id
     for _ in range(100):
         row = conn.execute(
@@ -90,7 +90,7 @@ def _compression_tip(conn: sqlite3.Connection, session_id: str) -> str:
 
 
 def _parse_model(row: sqlite3.Row) -> str | None:
-    """Prefer Hermes' direct model column, falling back to old model_config JSON."""
+    """Prefer NasTech' direct model column, falling back to old model_config JSON."""
     model = safe_get(row, "model")
     if model:
         return model
@@ -235,17 +235,17 @@ def _do_collect_sessions(db_path: str) -> SessionsState:
     )
 
 
-def collect_sessions(hermes_dir: str | None = None) -> SessionsState:
+def collect_sessions(nastech_dir: str | None = None) -> SessionsState:
     """Collect session data from state.db (cached, invalidates on db change)."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
-    db_path = Path(hermes_dir) / "state.db"
+    db_path = Path(nastech_dir) / "state.db"
     if not db_path.exists():
         return SessionsState()
 
     return get_cached_or_compute(
-        cache_key=f"sessions:{hermes_dir}",
+        cache_key=f"sessions:{nastech_dir}",
         compute_fn=lambda: _do_collect_sessions(str(db_path)),
         file_paths=[db_path],
         ttl=30,  # 30 second cache even if file unchanged

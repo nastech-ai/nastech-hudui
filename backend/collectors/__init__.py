@@ -1,4 +1,4 @@
-"""Hermes HUD data collectors."""
+"""NasTech HUD data collectors."""
 
 from .memory import collect_memory
 from .skills import collect_skills

@@ -321,8 +321,8 @@ export default function GatewayPanel() {
                 onStateChange={refresh}
               />
               <ActionRunner
-                actionName="hermes-update"
-                postPath="/api/hermes/update"
+                actionName="nastech-update"
+                postPath="/api/nastech/update"
                 label={t('gateway.update')}
                 description={t('gateway.updateDescription')}
                 confirmLabel={t('gateway.confirmUpdate')}

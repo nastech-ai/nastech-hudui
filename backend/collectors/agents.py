@@ -13,12 +13,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from .utils import parse_timestamp, default_hermes_dir, safe_get
+from .utils import parse_timestamp, default_nastech_dir, safe_get
 
 
 @dataclass
 class AgentProcess:
-    name: str           # hermes, claude, codex, opencode, llama-server
+    name: str           # nastech, claude, codex, opencode, llama-server
     binary: str         # actual binary name for pgrep
     running: bool = False
     pid: Optional[int] = None
@@ -107,7 +107,7 @@ class AgentsState:
 
 # Agent processes to scan for — add new entries as the ecosystem grows
 AGENT_PROCESSES = [
-    ("hermes", "hermes"),
+    ("nastech", "nastech"),
     ("claude", "claude"),
     ("codex", "codex"),
     ("opencode", "opencode"),
@@ -475,9 +475,9 @@ def _detect_operator_alerts(
     return alerts
 
 
-def _get_recent_sessions(hermes_dir: str, limit: int = 10) -> list[RecentSession]:
+def _get_recent_sessions(nastech_dir: str, limit: int = 10) -> list[RecentSession]:
     """Get recent sessions from state.db."""
-    db_path = Path(hermes_dir) / "state.db"
+    db_path = Path(nastech_dir) / "state.db"
     if not db_path.exists():
         return []
 
@@ -533,10 +533,10 @@ def _get_recent_sessions(hermes_dir: str, limit: int = 10) -> list[RecentSession
     return sessions
 
 
-def collect_agents(hermes_dir: str | None = None) -> AgentsState:
+def collect_agents(nastech_dir: str | None = None) -> AgentsState:
     """Collect all agent data."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
     # Scan for agent processes
     processes = []
@@ -571,7 +571,7 @@ def collect_agents(hermes_dir: str | None = None) -> AgentsState:
     alerts = _detect_operator_alerts(panes, processes) if panes else []
 
     # Get recent sessions
-    recent_sessions = _get_recent_sessions(hermes_dir)
+    recent_sessions = _get_recent_sessions(nastech_dir)
 
     return AgentsState(
         processes=processes,

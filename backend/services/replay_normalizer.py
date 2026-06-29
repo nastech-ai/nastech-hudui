@@ -1,4 +1,4 @@
-"""Normalize Hermes sessions into replay objects."""
+"""Normalize NasTech sessions into replay objects."""
 
 from __future__ import annotations
 
@@ -571,7 +571,7 @@ def normalize_session(session: SessionInfo, messages: list[dict[str, Any]]) -> R
             replay_id=run.replay_id,
             type="completion",
             title="Replay complete",
-            summary="Normalized replay timeline generated from local Hermes session data.",
+            summary="Normalized replay timeline generated from local NasTech session data.",
             timestamp=run.ended_at or events[-1].timestamp,
             status="success" if run.status == "success" else "unknown",
         ))
@@ -621,7 +621,7 @@ def normalize_session(session: SessionInfo, messages: list[dict[str, Any]]) -> R
         hashes=run.hashes,
         redaction={"mode": "safe_share", "findings_count": 0, "redacted_fields_count": 0},
         generated_at=datetime.now().isoformat(),
-        generator={"name": "hermes-replay", "version": "0.1"},
+        generator={"name": "nastech-replay", "version": "0.1"},
     )
     receipt.hashes.receipt_hash = _hash_payload({**receipt.__dict__, "hashes": receipt.hashes.__dict__ | {"receipt_hash": None}})
     run.hashes.receipt_hash = receipt.hashes.receipt_hash

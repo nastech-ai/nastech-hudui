@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from backend.collectors.memory import collect_memory
 from backend.collectors.config import collect_config
-from backend.collectors.utils import default_hermes_dir
+from backend.collectors.utils import default_nastech_dir
 from .serialize import to_dict
 
 router = APIRouter()
@@ -25,7 +25,7 @@ MemoryTarget = Literal["memory", "user"]
 
 def _memory_path(target: MemoryTarget) -> Path:
     """Return the path for MEMORY.md or USER.md."""
-    memories_dir = Path(default_hermes_dir()) / "memories"
+    memories_dir = Path(default_nastech_dir()) / "memories"
     if target == "user":
         return memories_dir / "USER.md"
     return memories_dir / "MEMORY.md"

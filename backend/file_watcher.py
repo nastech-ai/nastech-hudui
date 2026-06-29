@@ -1,6 +1,6 @@
-"""File watcher service for Hermes HUD.
+"""File watcher service for NasTech HUD.
 
-Watches ~/.hermes/ directory for changes and broadcasts updates via WebSocket.
+Watches ~/.nastech/ directory for changes and broadcasts updates via WebSocket.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from typing import Callable
 from watchfiles import Change, DefaultFilter, watch
 
 from .cache import clear_cache
-from .collectors.utils import default_hermes_dir
+from .collectors.utils import default_nastech_dir
 from .websocket_manager import ws_manager
 
 logger = logging.getLogger(__name__)
@@ -91,12 +91,12 @@ def _should_ignore(path: Path) -> bool:
     if any(name.endswith(p) or p in name for p in ignore_patterns):
         return True
     # Ignore hidden files
-    if name.startswith(".") and name not in {".env", ".hermes"}:
+    if name.startswith(".") and name not in {".env", ".nastech"}:
         return True
     return False
 
 
-class _HermesFilter(DefaultFilter):
+class _NasTechFilter(DefaultFilter):
     """DefaultFilter that also drops high-churn SQLite files at the watchfiles
     layer, so they don't even generate change events to process."""
 
@@ -108,10 +108,10 @@ class _HermesFilter(DefaultFilter):
 
 
 class FileWatcherService:
-    """Service that watches Hermes data directory for changes."""
+    """Service that watches NasTech data directory for changes."""
 
-    def __init__(self, hermes_dir: str | None = None):
-        self.hermes_dir = Path(default_hermes_dir(hermes_dir))
+    def __init__(self, nastech_dir: str | None = None):
+        self.nastech_dir = Path(default_nastech_dir(nastech_dir))
         self._stop_event = asyncio.Event()
         self._task: asyncio.Task | None = None
         self._on_change: Callable[[list[str], Path], None] | None = None
@@ -130,13 +130,13 @@ class FileWatcherService:
         if self._task is not None:
             return
 
-        if not self.hermes_dir.exists():
-            logger.warning(f"Hermes directory does not exist: {self.hermes_dir}")
+        if not self.nastech_dir.exists():
+            logger.warning(f"NasTech directory does not exist: {self.nastech_dir}")
             return
 
         self._stop_event.clear()
         self._task = asyncio.create_task(self._watch_loop())
-        logger.info(f"File watcher started for {self.hermes_dir}")
+        logger.info(f"File watcher started for {self.nastech_dir}")
 
     async def stop(self) -> None:
         """Stop the file watcher."""
@@ -154,11 +154,11 @@ class FileWatcherService:
 
     def _get_watch_paths(self) -> list[Path]:
         """Get paths to watch - main dir and key subdirectories."""
-        paths = [self.hermes_dir]
+        paths = [self.nastech_dir]
 
         # Add key subdirectories if they exist
         for subdir in ["skills", "profiles", "memories", "cron", "projects", "logs", "plugins"]:
-            path = self.hermes_dir / subdir
+            path = self.nastech_dir / subdir
             if path.exists():
                 paths.append(path)
 
@@ -198,7 +198,7 @@ class FileWatcherService:
                 stop_event=self._stop_event,
                 force_polling=True,
                 poll_delay_ms=2000,
-                watch_filter=_HermesFilter(),
+                watch_filter=_NasTechFilter(),
             ):
                 if self._stop_event.is_set():
                     break
@@ -285,11 +285,11 @@ class FileWatcherService:
 file_watcher = FileWatcherService()
 
 
-async def start_watcher(hermes_dir: str | None = None) -> None:
+async def start_watcher(nastech_dir: str | None = None) -> None:
     """Start the global file watcher."""
     global file_watcher
-    if hermes_dir:
-        file_watcher = FileWatcherService(hermes_dir)
+    if nastech_dir:
+        file_watcher = FileWatcherService(nastech_dir)
     await file_watcher.start()
 
 

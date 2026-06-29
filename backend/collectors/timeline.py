@@ -1,4 +1,4 @@
-"""Build a unified timeline of Hermes growth events."""
+"""Build a unified timeline of NasTech growth events."""
 
 from __future__ import annotations
 

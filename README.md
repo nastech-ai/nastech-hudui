@@ -1,8 +1,8 @@
-# ☤ Hermes HUD — Web UI
+# ☤ NasTech HUD — Web UI
 
-A browser-based consciousness monitor for [Hermes](https://github.com/nousresearch/hermes-agent), the AI agent with persistent memory.
+A browser-based consciousness monitor for [NasTech](https://github.com/nousresearch/nastech-agent), the AI agent with persistent memory.
 
-Same data, same soul, same dashboard that made the [TUI version](https://github.com/joeynyc/hermes-hud) popular — now in your browser.
+Same data, same soul, same dashboard that made the [TUI version](https://github.com/joeynyc/nastech-hud) popular — now in your browser.
 
 ![Executive Dashboard](assets/dashboard-executive.png)
 
@@ -15,21 +15,21 @@ Same data, same soul, same dashboard that made the [TUI version](https://github.
 ## Quick Start
 
 ```bash
-git clone https://github.com/joeynyc/hermes-hudui.git
-cd hermes-hudui
+git clone https://github.com/joeynyc/nastech-hudui.git
+cd nastech-hudui
 ./install.sh
-hermes-hudui
+nastech-hudui
 ```
 
 Open http://localhost:3001
 
-**Requirements:** Python 3.11+, Node.js 18+, a running Hermes agent with data in `~/.hermes/`
+**Requirements:** Python 3.11+, Node.js 18+, a running NasTech agent with data in `~/.nastech/`
 
-**Verified against Hermes Agent v0.17.0** (state.db schema v16). The HUD reads `~/.hermes/` and the `hermes` CLI directly, so it tracks the agent's on-disk layout. The Health tab's *Agent data layout* and *Agent schema version* checks flag when your agent's data drifts from this baseline.
+**Verified against NasTech Agent v0.17.0** (state.db schema v16). The HUD reads `~/.nastech/` and the `nastech` CLI directly, so it tracks the agent's on-disk layout. The Health tab's *Agent data layout* and *Agent schema version* checks flag when your agent's data drifts from this baseline.
 
 On future runs:
 ```bash
-source venv/bin/activate && hermes-hudui
+source venv/bin/activate && nastech-hudui
 ```
 
 ## What's Inside
@@ -38,19 +38,19 @@ source venv/bin/activate && hermes-hudui
 
 The Dashboard opens with an executive summary: health, spend pulse, top model, provider/gateway risk, highest-cost session, and action items. Health reacts to filesystem and WebSocket updates, while expensive refresh paths stay throttled.
 
-Gateway visibility includes managed-tool routing for web search, image generation, text-to-speech, and browser automation. You can see whether each tool is routed through Nous Tool Gateway, a direct key, or is unavailable. The `Update hermes` action is deliberately two-click and shows last-run logs/status.
+Gateway visibility includes managed-tool routing for web search, image generation, text-to-speech, and browser automation. You can see whether each tool is routed through Nous Tool Gateway, a direct key, or is unavailable. The `Update nastech` action is deliberately two-click and shows last-run logs/status.
 
 The Plugin Hub shows installed dashboard and agent plugins, extension entry points, runtime status, required auth commands, and safe enable/disable/update actions.
 
 Updates in real time via WebSocket. No manual refresh needed.
 
-## Hermes Replay
+## NasTech Replay
 
-Hermes Replay turns agent runs into redacted, shareable proof artifacts.
+NasTech Replay turns agent runs into redacted, shareable proof artifacts.
 
-![Hermes Replay tab](assets/replay-tab.png)
+![NasTech Replay tab](assets/replay-tab.png)
 
-Open the Replay tab, choose a Hermes session, inspect the normalized timeline, review the run receipt, and export static artifacts for sharing or attaching to issues and PRs. The MVP exporter writes local files under `~/.hermes-hud/replays/` and does not upload anything by default.
+Open the Replay tab, choose a NasTech session, inspect the normalized timeline, review the run receipt, and export static artifacts for sharing or attaching to issues and PRs. The MVP exporter writes local files under `~/.nastech-hud/replays/` and does not upload anything by default.
 
 Current local exports:
 
@@ -74,7 +74,7 @@ English (default) and Chinese. Click the language toggle at the far right of the
 
 ## Themes
 
-Five themes switchable with `t`: **Neural Awakening** (cyan), **Hermes Teal** (official Nous dashboard palette), **Blade Runner** (amber), **fsociety** (green), **Anime** (purple). Optional CRT scanlines.
+Five themes switchable with `t`: **Neural Awakening** (cyan), **NasTech Teal** (official Nous dashboard palette), **Blade Runner** (amber), **fsociety** (green), **Anime** (purple). Optional CRT scanlines.
 
 The top tab bar is responsive: resize the browser and tabs stay reachable through horizontal scrolling, with the active tab kept in view.
 
@@ -88,13 +88,13 @@ The top tab bar is responsive: resize the browser and tabs stay reachable throug
 
 ## Relationship to the TUI
 
-This is the browser companion to [hermes-hud](https://github.com/joeynyc/hermes-hud). Both read from the same `~/.hermes/` data directory independently — use either one, or both at the same time.
+This is the browser companion to [nastech-hud](https://github.com/joeynyc/nastech-hud). Both read from the same `~/.nastech/` data directory independently — use either one, or both at the same time.
 
 The Web UI is fully standalone and adds features the TUI doesn't have: dedicated Memory, Skills, Sessions, Replay, Health, Providers, Gateway, Model, and Plugins tabs; per-model token and cost analytics; gateway managed-tool visibility; actionable diagnostics; command palette; live chat; theme switcher.
 
-If you also have the TUI installed, you can enable it with `pip install 'hermes-hudui[tui]'`.
+If you also have the TUI installed, you can enable it with `pip install 'nastech-hudui[tui]'`.
 
-(Quotes around `'hermes-hudui[tui]'` are required in zsh, where the unquoted `[tui]` is interpreted as a glob pattern. Bash and fish accept the unquoted form, but the quoted form is safe everywhere.)
+(Quotes around `'nastech-hudui[tui]'` are required in zsh, where the unquoted `[tui]` is interpreted as a glob pattern. Bash and fish accept the unquoted form, but the quoted form is safe everywhere.)
 
 ## Platform Support
 
@@ -106,10 +106,10 @@ MIT — see [LICENSE](LICENSE).
 
 ---
 
-<a href="https://www.star-history.com/?repos=joeynyc%2Fhermes-hudui&type=date&logscale=&legend=top-left">
+<a href="https://www.star-history.com/?repos=joeynyc%2Fnastech-hudui&type=date&logscale=&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=joeynyc/hermes-hudui&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=joeynyc/hermes-hudui&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=joeynyc/hermes-hudui&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&legend=top-left" />
  </picture>
 </a>

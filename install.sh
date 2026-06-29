@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Hermes HUD Web UI — installer
+# NasTech HUD Web UI — installer
 # Works on macOS, Linux, and Windows (WSL)
 set -e
 
-echo "☤ Hermes HUD Web UI — Install"
+echo "☤ NasTech HUD Web UI — Install"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Detect platform
@@ -64,15 +64,15 @@ if ! command -v npm &>/dev/null; then
     exit 1
 fi
 
-# Check for hermes data directory
-HERMES_DIR="${HERMES_HOME:-$HOME/.hermes}"
-if [ ! -d "$HERMES_DIR" ]; then
+# Check for nastech data directory
+NASTECH_DIR="${NASTECH_HOME:-$HOME/.nastech}"
+if [ ! -d "$NASTECH_DIR" ]; then
     echo ""
-    echo "⚠ No Hermes data found at $HERMES_DIR"
-    echo "  The dashboard will be empty until a Hermes agent runs."
+    echo "⚠ No NasTech data found at $NASTECH_DIR"
+    echo "  The dashboard will be empty until a NasTech agent runs."
     echo "  Options:"
-    echo "    1. Install and run Hermes first"
-    echo "    2. Set HERMES_HOME to your agent data directory"
+    echo "    1. Install and run NasTech first"
+    echo "    2. Set NASTECH_HOME to your agent data directory"
     echo ""
 fi
 
@@ -86,7 +86,7 @@ else
 fi
 
 # Activate and install
-echo "→ Installing hermes-hudui..."
+echo "→ Installing nastech-hudui..."
 source venv/bin/activate
 pip install -e . -q
 echo "✔ Backend installed"
@@ -110,7 +110,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "✔ Ready. To run:"
 echo ""
 echo "  source venv/bin/activate"
-echo "  hermes-hudui"
+echo "  nastech-hudui"
 echo ""
 echo "  Then open http://localhost:3001"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -1,4 +1,4 @@
-"""Live model capabilities derived from ~/.hermes/config.yaml + models_dev_cache.json."""
+"""Live model capabilities derived from ~/.nastech/config.yaml + models_dev_cache.json."""
 
 from __future__ import annotations
 
@@ -8,11 +8,11 @@ from typing import Optional
 
 from ..cache import get_cached_or_compute
 from .models import ModelCapabilities
-from .utils import default_hermes_dir, load_yaml
+from .utils import default_nastech_dir, load_yaml
 
 
-def _read_config(hermes_path: Path) -> dict:
-    cfg = hermes_path / "config.yaml"
+def _read_config(nastech_path: Path) -> dict:
+    cfg = nastech_path / "config.yaml"
     if not cfg.exists():
         return {}
     try:
@@ -21,9 +21,9 @@ def _read_config(hermes_path: Path) -> dict:
         return {}
 
 
-def _read_models_cache(hermes_path: Path) -> dict:
+def _read_models_cache(nastech_path: Path) -> dict:
     """Parse models_dev_cache.json — cached because it's ~1.8MB."""
-    path = hermes_path / "models_dev_cache.json"
+    path = nastech_path / "models_dev_cache.json"
 
     def _compute() -> dict:
         if not path.exists():
@@ -66,8 +66,8 @@ def _lookup_model(cache: dict, provider: str, model: str) -> Optional[dict]:
     return None
 
 
-def _do_collect(hermes_path: Path) -> ModelCapabilities:
-    config = _read_config(hermes_path)
+def _do_collect(nastech_path: Path) -> ModelCapabilities:
+    config = _read_config(nastech_path)
     model_cfg = config.get("model") if isinstance(config, dict) else None
     if isinstance(model_cfg, str):
         model_cfg = {"default": model_cfg}
@@ -91,7 +91,7 @@ def _do_collect(hermes_path: Path) -> ModelCapabilities:
     if not model:
         return caps
 
-    entry = _lookup_model(_read_models_cache(hermes_path), provider, model)
+    entry = _lookup_model(_read_models_cache(nastech_path), provider, model)
     if entry is None:
         # No models.dev metadata — still return config-based info.
         caps.effective_context_length = config_ctx
@@ -136,11 +136,11 @@ def _do_collect(hermes_path: Path) -> ModelCapabilities:
     return caps
 
 
-def collect_model_info(hermes_dir: Optional[str] = None) -> ModelCapabilities:
-    hermes_path = Path(default_hermes_dir(hermes_dir))
+def collect_model_info(nastech_dir: Optional[str] = None) -> ModelCapabilities:
+    nastech_path = Path(default_nastech_dir(nastech_dir))
     return get_cached_or_compute(
-        cache_key=f"model_info:{hermes_path}",
-        compute_fn=lambda: _do_collect(hermes_path),
-        file_paths=[hermes_path / "config.yaml", hermes_path / "models_dev_cache.json"],
+        cache_key=f"model_info:{nastech_path}",
+        compute_fn=lambda: _do_collect(nastech_path),
+        file_paths=[nastech_path / "config.yaml", nastech_path / "models_dev_cache.json"],
         ttl=60,
     )

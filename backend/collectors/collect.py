@@ -1,4 +1,4 @@
-"""Collect all Hermes HUD data into a single state object."""
+"""Collect all NasTech HUD data into a single state object."""
 
 from __future__ import annotations
 
@@ -13,18 +13,18 @@ from .config import collect_config
 from .timeline import build_timeline
 
 
-def collect_all(hermes_dir: str | None = None) -> HUDState:
+def collect_all(nastech_dir: str | None = None) -> HUDState:
     """Collect all data sources into a unified HUD state."""
     # Config must run first so memory limits are known before parsing memory files
-    config = collect_config(hermes_dir)
+    config = collect_config(nastech_dir)
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         f_mem = pool.submit(
-            collect_memory, hermes_dir,
+            collect_memory, nastech_dir,
             config.memory_char_limit, config.user_char_limit,
         )
-        f_skills = pool.submit(collect_skills, hermes_dir)
-        f_sessions = pool.submit(collect_sessions, hermes_dir)
+        f_skills = pool.submit(collect_skills, nastech_dir)
+        f_sessions = pool.submit(collect_sessions, nastech_dir)
 
     memory, user = f_mem.result()
     skills = f_skills.result()
@@ -46,7 +46,7 @@ def collect_all(hermes_dir: str | None = None) -> HUDState:
 
 def print_summary(state: HUDState):
     """Quick text dump for testing."""
-    print(f"=== Hermes HUD State (collected {state.collected_at:%Y-%m-%d %H:%M:%S}) ===\n")
+    print(f"=== NasTech HUD State (collected {state.collected_at:%Y-%m-%d %H:%M:%S}) ===\n")
 
     print(f"◆ Config: {state.config.provider}/{state.config.model} | backend={state.config.backend}")
     print(f"  toolsets: {', '.join(state.config.toolsets)}")

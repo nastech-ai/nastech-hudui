@@ -6,7 +6,7 @@ import { I18nProvider } from './i18n'
 
 // Set default theme before render to avoid flash
 if (!document.documentElement.getAttribute('data-theme')) {
-  document.documentElement.setAttribute('data-theme', localStorage.getItem('hud-theme') || 'hermes-official')
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('hud-theme') || 'nastech-official')
 }
 
 createRoot(document.getElementById('root')!).render(

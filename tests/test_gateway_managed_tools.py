@@ -6,9 +6,9 @@ from backend.collectors.gateway import collect_managed_tools
 def test_collect_managed_tools_reports_gateway_route_when_opted_in_and_nous_auth_present(
     tmp_path: Path,
 ) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    (hermes_dir / "config.yaml").write_text(
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    (nastech_dir / "config.yaml").write_text(
         """
 web:
   use_gateway: true
@@ -21,9 +21,9 @@ browser:
 """.strip(),
         encoding="utf-8",
     )
-    (hermes_dir / "auth.json").write_text('{"nous": {"access_token": "token"}}', encoding="utf-8")
+    (nastech_dir / "auth.json").write_text('{"nous": {"access_token": "token"}}', encoding="utf-8")
 
-    state = collect_managed_tools(hermes_dir=str(hermes_dir), env={})
+    state = collect_managed_tools(nastech_dir=str(nastech_dir), env={})
     by_key = {tool.key: tool for tool in state.tools}
 
     assert state.managed_count == 4
@@ -50,12 +50,12 @@ browser:
 def test_collect_managed_tools_reports_direct_credentials_without_gateway_opt_in(
     tmp_path: Path,
 ) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    (hermes_dir / "config.yaml").write_text("web: {}\nimage_gen: {}\ntts: {}\nbrowser: {}\n", encoding="utf-8")
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    (nastech_dir / "config.yaml").write_text("web: {}\nimage_gen: {}\ntts: {}\nbrowser: {}\n", encoding="utf-8")
 
     state = collect_managed_tools(
-        hermes_dir=str(hermes_dir),
+        nastech_dir=str(nastech_dir),
         env={
             "FIRECRAWL_API_KEY": "fc",
             "FAL_KEY": "fal",
@@ -82,9 +82,9 @@ def test_collect_managed_tools_reports_direct_credentials_without_gateway_opt_in
 
 
 def test_collect_managed_tools_explains_unavailable_gateway_requirements(tmp_path: Path) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    (hermes_dir / "config.yaml").write_text(
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    (nastech_dir / "config.yaml").write_text(
         """
 web:
   use_gateway: true
@@ -97,7 +97,7 @@ browser:
         encoding="utf-8",
     )
 
-    state = collect_managed_tools(hermes_dir=str(hermes_dir), env={})
+    state = collect_managed_tools(nastech_dir=str(nastech_dir), env={})
     by_key = {tool.key: tool for tool in state.tools}
 
     assert state.managed_count == 0

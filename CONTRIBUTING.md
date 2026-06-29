@@ -1,12 +1,12 @@
-# Contributing to Hermes HUD Web UI
+# Contributing to NasTech HUD Web UI
 
 Thanks for your interest in contributing.
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/joeynyc/hermes-hudui.git
-cd hermes-hudui
+git clone https://github.com/joeynyc/nastech-hudui.git
+cd nastech-hudui
 
 # Create and activate virtual environment
 python3.11 -m venv venv
@@ -20,7 +20,7 @@ cd frontend
 npm install
 
 # Run dev servers (two terminals)
-hermes-hudui --dev          # backend on :3001
+nastech-hudui --dev          # backend on :3001
 cd frontend && npm run dev  # frontend on :5173 (proxies /api to :3001)
 ```
 
@@ -41,7 +41,7 @@ frontend/src/lib/         Shared formatting utilities
 
 ## Key Patterns
 
-- Backend imports hermes-hud collectors directly — never duplicate data logic
+- Backend imports nastech-hud collectors directly — never duplicate data logic
 - **Caching** — Use `@cache_with_mtime()` decorator for expensive collectors (see `backend/collectors/sessions.py`)
 - **Real-time Updates** — File watcher detects changes → clears cache → broadcasts WebSocket event → frontend SWR revalidates silently
 - Each frontend panel fetches its own endpoint via `useApi('/path')` with `keepPreviousData: true`
@@ -59,7 +59,7 @@ frontend/src/lib/         Shared formatting utilities
 
 ## Chat Architecture Notes
 
-- `backend/chat/engine.py` — Singleton `ChatEngine`. Spawns `hermes chat -q <msg> -Q --source tool` per message. Streams stdout, filters box-drawing decoration via regex. No server-side message persistence.
+- `backend/chat/engine.py` — Singleton `ChatEngine`. Spawns `nastech chat -q <msg> -Q --source tool` per message. Streams stdout, filters box-drawing decoration via regex. No server-side message persistence.
 - `frontend/src/hooks/useChat.ts` — Manages SSE streaming, session CRUD, and a `Map<sessionId, ChatMessage[]>` message cache in a `useRef`. Saves/restores messages on session switch via `useEffect` keyed on `sessionId`.
 - Chat tab in `App.tsx` uses `flex: '1 1 0', height: 0, overflow: hidden` so the message thread scrolls internally. Do not change this to `overflow-y-auto` or the page will scroll.
 

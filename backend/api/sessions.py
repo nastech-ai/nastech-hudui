@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query
 
-from backend.collectors.utils import default_hermes_dir
+from backend.collectors.utils import default_nastech_dir
 from backend.collectors.sessions import collect_sessions
 from .serialize import to_dict
 
@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 def _db_path() -> Path:
-    return Path(default_hermes_dir()) / "state.db"
+    return Path(default_nastech_dir()) / "state.db"
 
 
 @router.get("/sessions")

@@ -46,9 +46,9 @@ def _insert_session(path: Path, **values) -> None:
 def test_token_costs_reports_actual_deltas_cache_savings_and_top_sessions(
     tmp_path: Path, monkeypatch
 ) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path)
     now = datetime.now()
 
@@ -97,7 +97,7 @@ def test_token_costs_reports_actual_deltas_cache_savings_and_top_sessions(
         actual_cost_usd=None,
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(hermes_dir))
+    monkeypatch.setenv("NASTECH_HOME", str(nastech_dir))
 
     data = asyncio.run(get_token_costs())
 
@@ -128,9 +128,9 @@ def test_token_costs_reports_actual_deltas_cache_savings_and_top_sessions(
 def test_token_costs_handles_old_schema_without_actual_cost(
     tmp_path: Path, monkeypatch
 ) -> None:
-    hermes_dir = tmp_path / "hermes"
-    hermes_dir.mkdir()
-    db_path = hermes_dir / "state.db"
+    nastech_dir = tmp_path / "nastech"
+    nastech_dir.mkdir()
+    db_path = nastech_dir / "state.db"
     _make_state_db(db_path, include_actual_cost=False)
     _insert_session(
         db_path,
@@ -142,7 +142,7 @@ def test_token_costs_handles_old_schema_without_actual_cost(
         input_tokens=1_000_000,
         output_tokens=100_000,
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_dir))
+    monkeypatch.setenv("NASTECH_HOME", str(nastech_dir))
 
     data = asyncio.run(get_token_costs())
 

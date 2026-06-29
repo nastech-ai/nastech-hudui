@@ -1,4 +1,4 @@
-"""Remote static publishing for Hermes Replay (PRD §22.1).
+"""Remote static publishing for NasTech Replay (PRD §22.1).
 
 Builds a deployable static site from locally published replays and syncs it
 to a git-backed static host (GitHub Pages, or any repo a static host serves).
@@ -128,7 +128,7 @@ def _write_site_index(site_dir: Path, public_entries: list[dict]) -> None:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hermes Replay Gallery</title>
+  <title>NasTech Replay Gallery</title>
   <style>
     body {{ margin:0; font-family:system-ui,sans-serif; background:#071211; color:#d7fffb; }}
     main {{ max-width:1080px; margin:0 auto; padding:32px; }}
@@ -142,8 +142,8 @@ def _write_site_index(site_dir: Path, public_entries: list[dict]) -> None:
 </head>
 <body>
   <main>
-    <h1>Hermes Replay Gallery</h1>
-    <p>Run receipts published from Hermes Replay. All artifacts are redacted in Safe Share Mode.</p>
+    <h1>NasTech Replay Gallery</h1>
+    <p>Run receipts published from NasTech Replay. All artifacts are redacted in Safe Share Mode.</p>
     <section class="grid">{''.join(cards) or '<article><h2>No published replays</h2></article>'}</section>
   </main>
 </body>
@@ -275,10 +275,10 @@ def sync_remote() -> dict:
     if not up_to_date:
         _run_git(
             [
-                "-c", "user.name=Hermes Replay",
-                "-c", "user.email=replay@hermes-hud.local",
+                "-c", "user.name=NasTech Replay",
+                "-c", "user.email=replay@nastech-hud.local",
                 "commit",
-                "-m", f"Sync Hermes Replay gallery ({site['public_count']} public, {site['unlisted_count']} unlisted)",
+                "-m", f"Sync NasTech Replay gallery ({site['public_count']} public, {site['unlisted_count']} unlisted)",
             ],
             repo_dir,
         )

@@ -1,4 +1,4 @@
-"""Shared utilities for Hermes HUD collectors."""
+"""Shared utilities for NasTech HUD collectors."""
 
 import os
 from datetime import datetime
@@ -32,24 +32,24 @@ def load_yaml(text: str) -> dict:
     return result
 
 
-def default_hermes_dir(hermes_dir: str | None = None) -> str:
-    """Return the hermes directory.
+def default_nastech_dir(nastech_dir: str | None = None) -> str:
+    """Return the nastech directory.
 
-    Priority: explicit arg > HERMES_HOME env var > ~/.hermes
+    Priority: explicit arg > NASTECH_HOME env var > ~/.nastech
     """
-    if hermes_dir:
-        return hermes_dir
-    return os.environ.get("HERMES_HOME", os.path.expanduser("~/.hermes"))
+    if nastech_dir:
+        return nastech_dir
+    return os.environ.get("NASTECH_HOME", os.path.expanduser("~/.nastech"))
 
 
 def default_projects_dir(projects_dir: str | None = None) -> str:
     """Return the projects directory.
 
-    Priority: explicit arg > HERMES_HUD_PROJECTS_DIR env var > ~/projects
+    Priority: explicit arg > NASTECH_HUD_PROJECTS_DIR env var > ~/projects
     """
     if projects_dir:
         return projects_dir
-    return os.environ.get("HERMES_HUD_PROJECTS_DIR", os.path.expanduser("~/projects"))
+    return os.environ.get("NASTECH_HUD_PROJECTS_DIR", os.path.expanduser("~/projects"))
 
 
 def safe_get(row, key, default=None):

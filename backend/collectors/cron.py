@@ -1,11 +1,11 @@
-"""Collect Hermes cron job data."""
+"""Collect NasTech cron job data."""
 
 from __future__ import annotations
 
 import json
 import os
 
-from .utils import default_hermes_dir
+from .utils import default_nastech_dir
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -57,12 +57,12 @@ class CronState:
         return any(j.last_error for j in self.jobs)
 
 
-def collect_cron(hermes_dir: str | None = None) -> CronState:
+def collect_cron(nastech_dir: str | None = None) -> CronState:
     """Collect cron job data from jobs.json."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
-    cron_dir = Path(hermes_dir) / "cron"
+    cron_dir = Path(nastech_dir) / "cron"
     jobs_file = cron_dir / "jobs.json"
     output_dir = cron_dir / "output"
 

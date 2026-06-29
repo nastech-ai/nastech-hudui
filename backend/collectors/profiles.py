@@ -1,4 +1,4 @@
-"""Collect Hermes profile data from ~/.hermes/profiles/."""
+"""Collect NasTech profile data from ~/.nastech/profiles/."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from urllib.error import URLError
 
 from ..cache import get_cached_or_compute
 from .memory import MEMORY_MAX_CHARS, USER_MAX_CHARS
-from .utils import default_hermes_dir, safe_get
+from .utils import default_nastech_dir, safe_get
 from .models import ProfileInfo, ProfilesState
 
 _ALIAS_BIN_DIRS = [os.path.expanduser("~/.local/bin"), "/usr/local/bin"]
@@ -208,9 +208,9 @@ def _read_api_keys(profile_dir: Path) -> list[str]:
 def _check_gateway_status(profile_name: str) -> str:
     """Check systemd gateway service status."""
     service = (
-        f"hermes-gateway-{profile_name}"
+        f"nastech-gateway-{profile_name}"
         if profile_name != "default"
-        else "hermes-gateway"
+        else "nastech-gateway"
     )
     try:
         result = subprocess.run(
@@ -354,16 +354,16 @@ def _collect_single_profile(
     )
 
 
-def _do_collect_profiles(hermes_path: Path) -> ProfilesState:
+def _do_collect_profiles(nastech_path: Path) -> ProfilesState:
     """Actually collect all profile data (internal, uncached)."""
     profiles = []
 
-    # Default profile is the hermes_dir itself
-    default_profile = _collect_single_profile(hermes_path, "default", is_default=True)
+    # Default profile is the nastech_dir itself
+    default_profile = _collect_single_profile(nastech_path, "default", is_default=True)
     profiles.append(default_profile)
 
     # Scan profiles subdirectory
-    profiles_dir = hermes_path / "profiles"
+    profiles_dir = nastech_path / "profiles"
     if profiles_dir.is_dir():
         for entry in sorted(profiles_dir.iterdir()):
             if entry.is_dir() and not entry.name.startswith("."):
@@ -373,22 +373,22 @@ def _do_collect_profiles(hermes_path: Path) -> ProfilesState:
     return ProfilesState(profiles=profiles)
 
 
-def collect_profiles(hermes_dir: str | None = None) -> ProfilesState:
-    """Collect data for all Hermes profiles (cached)."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir()
+def collect_profiles(nastech_dir: str | None = None) -> ProfilesState:
+    """Collect data for all NasTech profiles (cached)."""
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir()
 
-    hermes_path = Path(hermes_dir)
+    nastech_path = Path(nastech_dir)
 
     # Monitor both main dir and profiles subdir
-    paths_to_monitor = [hermes_path]
-    profiles_dir = hermes_path / "profiles"
+    paths_to_monitor = [nastech_path]
+    profiles_dir = nastech_path / "profiles"
     if profiles_dir.exists():
         paths_to_monitor.append(profiles_dir)
 
     return get_cached_or_compute(
-        cache_key=f"profiles:{hermes_dir}",
-        compute_fn=lambda: _do_collect_profiles(hermes_path),
+        cache_key=f"profiles:{nastech_dir}",
+        compute_fn=lambda: _do_collect_profiles(nastech_path),
         dir_paths=paths_to_monitor,
         ttl=45,  # 45 second cache
     )

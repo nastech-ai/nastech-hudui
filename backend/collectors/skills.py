@@ -1,4 +1,4 @@
-"""Scan Hermes skills directory and extract metadata."""
+"""Scan NasTech skills directory and extract metadata."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 from ..cache import get_cached_or_compute
 from .models import SkillInfo, SkillsState
-from .utils import default_hermes_dir
+from .utils import default_nastech_dir
 
 
 def _parse_skill_md(path: Path) -> dict:
@@ -105,17 +105,17 @@ def _do_collect_skills(skills_dir: Path) -> SkillsState:
     return SkillsState(skills=skills)
 
 
-def collect_skills(hermes_dir: str | None = None) -> SkillsState:
+def collect_skills(nastech_dir: str | None = None) -> SkillsState:
     """Collect all skills metadata (cached, invalidates on directory changes)."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
-    skills_dir = Path(hermes_dir) / "skills"
+    skills_dir = Path(nastech_dir) / "skills"
     if not skills_dir.exists():
         return SkillsState()
 
     return get_cached_or_compute(
-        cache_key=f"skills:{hermes_dir}",
+        cache_key=f"skills:{nastech_dir}",
         compute_fn=lambda: _do_collect_skills(skills_dir),
         dir_paths=[skills_dir],
         ttl=60,  # 60 second cache even if unchanged

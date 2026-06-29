@@ -1,4 +1,4 @@
-"""Parse Hermes config.yaml."""
+"""Parse NasTech config.yaml."""
 
 from __future__ import annotations
 
@@ -6,15 +6,15 @@ import os
 from pathlib import Path
 
 from .models import ConfigState
-from .utils import default_hermes_dir, load_yaml
+from .utils import default_nastech_dir, load_yaml
 
 
-def collect_config(hermes_dir: str | None = None) -> ConfigState:
+def collect_config(nastech_dir: str | None = None) -> ConfigState:
     """Collect configuration state."""
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
-    config_path = Path(hermes_dir) / "config.yaml"
+    config_path = Path(nastech_dir) / "config.yaml"
     if not config_path.exists():
         return ConfigState()
 

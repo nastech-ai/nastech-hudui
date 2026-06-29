@@ -21,7 +21,7 @@ def test_chat_composer_shows_stage_and_latency() -> None:
     composer = (ROOT / "frontend/src/components/chat/Composer.tsx").read_text()
     hook = (ROOT / "frontend/src/hooks/useChat.ts").read_text()
 
-    assert "starting Hermes" in composer
+    assert "starting NasTech" in composer
     assert "connecting model" in composer
     assert "first token" in composer
     assert "status: state.status" in hook

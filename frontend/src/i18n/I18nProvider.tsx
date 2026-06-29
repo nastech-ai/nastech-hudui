@@ -9,7 +9,7 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | null>(null)
 
-const STORAGE_KEY = 'hermes-hudui-lang'
+const STORAGE_KEY = 'nastech-hudui-lang'
 
 function getInitialLang(): Language {
   // Check localStorage first

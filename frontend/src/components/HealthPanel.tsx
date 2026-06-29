@@ -176,8 +176,8 @@ export default function HealthPanel() {
           ))}
         </div>
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2 text-[12px]">
-          <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('health.cli')}:</span> {data.hermes_cli_status || '-'}</div>
-          <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('health.path')}:</span> {data.hermes_cli_path || '-'}</div>
+          <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('health.cli')}:</span> {data.nastech_cli_status || '-'}</div>
+          <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('health.path')}:</span> {data.nastech_cli_path || '-'}</div>
           <div><span style={{ color: 'var(--hud-text-dim)' }}>{t('health.lastSession')}:</span> {data.last_session_at ? timeAgo(data.last_session_at) : '-'}</div>
         </div>
         <div className="mt-3 flex flex-wrap gap-1">

@@ -1,4 +1,4 @@
-"""Parse Hermes memory files (MEMORY.md and USER.md)."""
+"""Parse NasTech memory files (MEMORY.md and USER.md)."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ import re
 from pathlib import Path
 
 from .models import MemoryEntry, MemoryState
-from .utils import default_hermes_dir
+from .utils import default_nastech_dir
 
-# Capacity limits (from Hermes system prompt injection)
+# Capacity limits (from NasTech system prompt injection)
 MEMORY_MAX_CHARS = 2200
 USER_MAX_CHARS = 1375
 
@@ -82,7 +82,7 @@ def _parse_entries(content: str, source: str) -> list[MemoryEntry]:
 
 
 def collect_memory(
-    hermes_dir: str | None = None,
+    nastech_dir: str | None = None,
     memory_char_limit: int = MEMORY_MAX_CHARS,
     user_char_limit: int = USER_MAX_CHARS,
 ) -> tuple[MemoryState, MemoryState]:
@@ -91,10 +91,10 @@ def collect_memory(
     Returns:
         (memory_state, user_state)
     """
-    if hermes_dir is None:
-        hermes_dir = default_hermes_dir(hermes_dir)
+    if nastech_dir is None:
+        nastech_dir = default_nastech_dir(nastech_dir)
 
-    memories_dir = Path(hermes_dir) / "memories"
+    memories_dir = Path(nastech_dir) / "memories"
 
     # Parse MEMORY.md
     memory_path = memories_dir / "MEMORY.md"

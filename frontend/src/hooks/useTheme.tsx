@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
-export type ThemeId = 'ai' | 'hermes-official' | 'blade-runner' | 'fsociety' | 'anime'
+export type ThemeId = 'ai' | 'nastech-official' | 'blade-runner' | 'fsociety' | 'anime'
 
 interface ThemeContextValue {
   theme: ThemeId
@@ -10,7 +10,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'hermes-official',
+  theme: 'nastech-official',
   setTheme: () => {},
   scanlines: false,
   setScanlines: () => {},
@@ -18,7 +18,7 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 export const THEMES: { id: ThemeId; labelKey: string; icon: string }[] = [
   { id: 'ai', labelKey: 'theme.neuralAwakening', icon: '◆' },
-  { id: 'hermes-official', labelKey: 'theme.hermesOfficial', icon: '☤' },
+  { id: 'nastech-official', labelKey: 'theme.nastechOfficial', icon: '☤' },
   { id: 'blade-runner', labelKey: 'theme.bladeRunner', icon: '◈' },
   { id: 'fsociety', labelKey: 'theme.fsociety', icon: '▣' },
   { id: 'anime', labelKey: 'theme.anime', icon: '◎' },
@@ -26,7 +26,7 @@ export const THEMES: { id: ThemeId; labelKey: string; icon: string }[] = [
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>(() => {
-    return (localStorage.getItem('hud-theme') as ThemeId) || 'hermes-official'
+    return (localStorage.getItem('hud-theme') as ThemeId) || 'nastech-official'
   })
   const [scanlines, setScanlinesState] = useState(() => {
     return localStorage.getItem('hud-scanlines') === 'true'

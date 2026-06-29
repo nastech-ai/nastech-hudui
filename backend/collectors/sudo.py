@@ -11,15 +11,15 @@ from pathlib import Path
 from typing import Optional
 
 from .models import SudoCommand, SudoConfig, SudoState, SudoStats
-from .utils import default_hermes_dir, load_yaml, safe_get
+from .utils import default_nastech_dir, load_yaml, safe_get
 
 _SUDO_RE = re.compile(r"(sudo\s+\S+(?:\s+\S+){0,5})")
 _PASSWORD_ERR = re.compile(r"sudo:.*terminal.*required|sudo:.*password", re.IGNORECASE)
 _APPROVE_RE = re.compile(r"User approved dangerous command via /approve:\s*(sudo\S*(?:\s+\S+)*)")
 
 
-def _collect_config(hermes_dir: str) -> SudoConfig:
-    config_path = Path(hermes_dir) / "config.yaml"
+def _collect_config(nastech_dir: str) -> SudoConfig:
+    config_path = Path(nastech_dir) / "config.yaml"
     if not config_path.exists():
         return SudoConfig()
 
@@ -49,8 +49,8 @@ def _subcommand_type(command: str) -> str:
     return parts[idx] if idx < len(parts) else "unknown"
 
 
-def _collect_commands(hermes_dir: str) -> list[SudoCommand]:
-    db_path = Path(hermes_dir) / "state.db"
+def _collect_commands(nastech_dir: str) -> list[SudoCommand]:
+    db_path = Path(nastech_dir) / "state.db"
     if not db_path.exists():
         return []
 
@@ -119,8 +119,8 @@ def _collect_commands(hermes_dir: str) -> list[SudoCommand]:
     return commands
 
 
-def _collect_approved_from_log(hermes_dir: str) -> list[SudoCommand]:
-    log_path = Path(hermes_dir) / "logs" / "gateway.log"
+def _collect_approved_from_log(nastech_dir: str) -> list[SudoCommand]:
+    log_path = Path(nastech_dir) / "logs" / "gateway.log"
     if not log_path.exists():
         return []
 
@@ -173,13 +173,13 @@ def _compute_stats(commands: list[SudoCommand]) -> SudoStats:
     )
 
 
-def collect_sudo(hermes_dir: str | None = None) -> SudoState:
+def collect_sudo(nastech_dir: str | None = None) -> SudoState:
     """Collect sudo configuration, usage statistics, and command history."""
-    hermes_dir = default_hermes_dir(hermes_dir)
+    nastech_dir = default_nastech_dir(nastech_dir)
 
-    sudo_config = _collect_config(hermes_dir)
-    db_commands = _collect_commands(hermes_dir)
-    log_commands = _collect_approved_from_log(hermes_dir)
+    sudo_config = _collect_config(nastech_dir)
+    db_commands = _collect_commands(nastech_dir)
+    log_commands = _collect_approved_from_log(nastech_dir)
 
     seen: set[tuple] = {(c.timestamp, c.command[:50]) for c in db_commands}
     for lc in log_commands:

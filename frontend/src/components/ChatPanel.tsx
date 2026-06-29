@@ -121,8 +121,8 @@ export default function ChatPanel() {
             <div className="text-[13px]" style={{ color: 'var(--hud-text-dim)' }}>
               To enable chat, either:
               <ul className="mt-2 space-y-1 text-left">
-                <li>• Install hermes-agent: <code className="text-[var(--hud-primary)]">pip install hermes-agent</code></li>
-                <li>• Or start Hermes in a tmux session: <code className="text-[var(--hud-primary)]">tmux new -s hermes</code></li>
+                <li>• Install nastech-agent: <code className="text-[var(--hud-primary)]">pip install nastech-agent</code></li>
+                <li>• Or start NasTech in a tmux session: <code className="text-[var(--hud-primary)]">tmux new -s nastech</code></li>
               </ul>
             </div>
           </div>

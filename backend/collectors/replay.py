@@ -1,4 +1,4 @@
-"""Collect Replay runs from Hermes session data."""
+"""Collect Replay runs from NasTech session data."""
 
 from __future__ import annotations
 
@@ -9,29 +9,29 @@ from typing import Any
 
 from backend.collectors.models import SessionInfo
 from backend.collectors.sessions import collect_sessions
-from backend.collectors.utils import default_hermes_dir, parse_timestamp, safe_get
+from backend.collectors.utils import default_nastech_dir, parse_timestamp, safe_get
 from backend.models.replay import ReplayDetail, ReplayRun
 from backend.services.replay_normalizer import build_replay_run, normalize_session
 
 logger = logging.getLogger(__name__)
 
 
-def _db_path(hermes_dir: str | None = None) -> Path:
-    return Path(default_hermes_dir(hermes_dir)) / "state.db"
+def _db_path(nastech_dir: str | None = None) -> Path:
+    return Path(default_nastech_dir(nastech_dir)) / "state.db"
 
 
-def list_replay_runs(limit: int = 50, hermes_dir: str | None = None) -> list[ReplayRun]:
-    state = collect_sessions(hermes_dir)
+def list_replay_runs(limit: int = 50, nastech_dir: str | None = None) -> list[ReplayRun]:
+    state = collect_sessions(nastech_dir)
     return [build_replay_run(session) for session in state.sessions[:limit]]
 
 
-def _session_by_id(session_id: str, hermes_dir: str | None = None) -> SessionInfo | None:
-    state = collect_sessions(hermes_dir)
+def _session_by_id(session_id: str, nastech_dir: str | None = None) -> SessionInfo | None:
+    state = collect_sessions(nastech_dir)
     return next((session for session in state.sessions if session.id == session_id), None)
 
 
-def _load_messages(session_id: str, hermes_dir: str | None = None, limit: int = 500) -> list[dict[str, Any]]:
-    db = _db_path(hermes_dir)
+def _load_messages(session_id: str, nastech_dir: str | None = None, limit: int = 500) -> list[dict[str, Any]]:
+    db = _db_path(nastech_dir)
     if not db.exists():
         return []
 
@@ -70,8 +70,8 @@ def _load_messages(session_id: str, hermes_dir: str | None = None, limit: int = 
     return messages
 
 
-def _fallback_session(session_id: str, hermes_dir: str | None = None) -> SessionInfo | None:
-    db = _db_path(hermes_dir)
+def _fallback_session(session_id: str, nastech_dir: str | None = None) -> SessionInfo | None:
+    db = _db_path(nastech_dir)
     if not db.exists():
         return None
     try:
@@ -115,10 +115,10 @@ def _fallback_session(session_id: str, hermes_dir: str | None = None) -> Session
     )
 
 
-def get_replay_detail(session_id: str, hermes_dir: str | None = None) -> ReplayDetail | None:
-    session = _session_by_id(session_id, hermes_dir) or _fallback_session(session_id, hermes_dir)
+def get_replay_detail(session_id: str, nastech_dir: str | None = None) -> ReplayDetail | None:
+    session = _session_by_id(session_id, nastech_dir) or _fallback_session(session_id, nastech_dir)
     if not session:
         return None
-    messages = _load_messages(session_id, hermes_dir)
+    messages = _load_messages(session_id, nastech_dir)
     return normalize_session(session, messages)
 

@@ -49,7 +49,7 @@ def _clone(remote: Path, target: Path) -> Path:
 
 
 def test_remote_settings_default_disabled_and_roundtrip(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
 
     settings = get_remote_settings()
     assert settings["enabled"] is False
@@ -65,7 +65,7 @@ def test_remote_settings_default_disabled_and_roundtrip(tmp_path, monkeypatch) -
 
 
 def test_build_site_indexes_public_only_and_strips_local_paths(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
     publish_replay(_detail("session-public", "Public run"), visibility="public")
     publish_replay(_detail("session-unlisted", "Unlisted run"), visibility="unlisted")
 
@@ -96,7 +96,7 @@ def test_build_site_indexes_public_only_and_strips_local_paths(tmp_path, monkeyp
 
 
 def test_sync_remote_pushes_site_and_reports_urls(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path / "replays"))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path / "replays"))
     remote = _make_bare_remote(tmp_path / "remote.git")
     update_remote_settings(
         {"enabled": True, "repo": str(remote), "branch": "main", "base_url": "https://replays.example.com"}
@@ -127,7 +127,7 @@ def test_sync_remote_pushes_site_and_reports_urls(tmp_path, monkeypatch) -> None
 
 
 def test_sync_remote_removes_unpublished_runs(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path / "replays"))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path / "replays"))
     remote = _make_bare_remote(tmp_path / "remote.git")
     update_remote_settings({"enabled": True, "repo": str(remote), "branch": "main"})
 
@@ -146,7 +146,7 @@ def test_sync_remote_removes_unpublished_runs(tmp_path, monkeypatch) -> None:
 
 
 def test_sync_remote_requires_enabled_and_repo(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("HERMES_HUD_REPLAY_DIR", str(tmp_path))
+    monkeypatch.setenv("NASTECH_HUD_REPLAY_DIR", str(tmp_path))
 
     with pytest.raises(PublishError, match="disabled"):
         sync_remote()

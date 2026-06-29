@@ -1,4 +1,4 @@
-"""Hermes HUD Web UI — FastAPI backend."""
+"""NasTech HUD Web UI — FastAPI backend."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ if sys.platform == "darwin":
     os.environ.setdefault("MallocStackLogging", "0")
     os.environ.setdefault("MallocLogFile", "/dev/null")
 
-# Ensure dirs that commonly hold the hermes CLI are on PATH even when the
+# Ensure dirs that commonly hold the nastech CLI are on PATH even when the
 # server is launched with a minimal environment (systemd, cron, launchd).
 # Appended, so an existing PATH ordering is never overridden.
 _path_parts = [p for p in os.environ.get("PATH", "").split(os.pathsep) if p]
@@ -66,19 +66,19 @@ STATIC_DIR = Path(__file__).parent / "static"
 async def lifespan(app: FastAPI):
     """Manage application lifespan: start/stop file watcher."""
     # Startup
-    hermes_dir = os.environ.get("HERMES_HOME") or os.path.expanduser("~/.hermes")
-    await start_watcher(hermes_dir)
-    logger.info(f"Hermes HUD started, watching {hermes_dir}")
+    nastech_dir = os.environ.get("NASTECH_HOME") or os.path.expanduser("~/.nastech")
+    await start_watcher(nastech_dir)
+    logger.info(f"NasTech HUD started, watching {nastech_dir}")
 
     yield
 
     # Shutdown
     await stop_watcher()
-    logger.info("Hermes HUD stopped")
+    logger.info("NasTech HUD stopped")
 
 
 app = FastAPI(
-    title="Hermes HUD",
+    title="NasTech HUD",
     version="0.9.1",
     lifespan=lifespan,
 )
@@ -151,20 +151,20 @@ if STATIC_DIR.exists():
 
 
 def cli():
-    """CLI entry point: hermes-hudui"""
-    parser = argparse.ArgumentParser(description="Hermes HUD Web UI")
+    """CLI entry point: nastech-hudui"""
+    parser = argparse.ArgumentParser(description="NasTech HUD Web UI")
     parser.add_argument("--port", type=int, default=3001, help="Port (default: 3001)")
     parser.add_argument("--host", default="127.0.0.1", help="Host (default: 127.0.0.1)")
     parser.add_argument(
         "--dev", action="store_true", help="Development mode (auto-reload)"
     )
     parser.add_argument(
-        "--hermes-dir", default=None, help="Hermes data directory (default: ~/.hermes)"
+        "--nastech-dir", default=None, help="NasTech data directory (default: ~/.nastech)"
     )
     args = parser.parse_args()
 
-    if args.hermes_dir:
-        os.environ["HERMES_HOME"] = args.hermes_dir
+    if args.nastech_dir:
+        os.environ["NASTECH_HOME"] = args.nastech_dir
 
     import uvicorn
 
