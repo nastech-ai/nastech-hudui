@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════
-   HERMES HUD — Theme System
+   /* == NasTech HUD — Theme System == */
    5 themes as CSS custom properties. One-line switch.
    ═══════════════════════════════════════════════════════════ */
 
@@ -38,8 +38,8 @@
   --hud-gradient-end: #00ffff;
 }
 
-/* ── Hermes Teal (official) ─────────────────────────────── */
-[data-theme="hermes-official"] {
+/* ── NasTech Teal (official) ─────────────────────────────── */
+[data-theme="nastech-official"] {
   --hud-bg-deep: #041c1c;
   --hud-bg-surface: #092626;
   --hud-bg-panel: #0d3030;

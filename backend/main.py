@@ -52,8 +52,15 @@ from .api import (
     gateway,
     model_info,
     plugins,
-    replay,
 )
+
+# Optional: replay features (requires cryptography — may fail on some platforms)
+try:
+    from .api import replay
+except ImportError:
+    import logging
+    logging.getLogger(__name__).warning("Replay features disabled: cryptography not available")
+    replay = None
 from .file_watcher import start_watcher, stop_watcher
 from .websocket_manager import ws_manager
 
@@ -142,7 +149,8 @@ app.include_router(providers.router, prefix="/api")
 app.include_router(gateway.router, prefix="/api")
 app.include_router(model_info.router, prefix="/api")
 app.include_router(plugins.router, prefix="/api")
-app.include_router(replay.router, prefix="/api")
+if replay is not None:
+    app.include_router(replay.router, prefix="/api")
 
 # Serve frontend static files (after API routes so /api takes priority)
 if STATIC_DIR.exists():
