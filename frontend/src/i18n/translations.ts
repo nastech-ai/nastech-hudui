@@ -551,7 +551,7 @@ export const translations = {
     // Boot screen
     'boot.connecting': 'Connecting to NasTech...',
     'boot.ready': 'Ready',
-    'boot.version': 'nastech-hudui',
+    'boot.version': 'NasTech HUD v0.18.0',
 
     // Theme
     'theme.title': 'Theme',
@@ -1116,7 +1116,7 @@ export const translations = {
     // Boot screen
     'boot.connecting': '正在连接 NasTech...',
     'boot.ready': '就绪',
-    'boot.version': 'nastech-hudui',
+    'boot.version': 'NasTech HUD v0.18.0',
 
     // Theme
     'theme.title': '主题',

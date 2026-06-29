@@ -4,8 +4,18 @@ All notable changes to nastech-hudui are documented here.
 
 ## [Unreleased]
 
-### Added
-- **Agent compatibility diagnostics** — the Health tab now reports two drift checks: *Agent data layout* (flags pre-0.17 `~/.nastech/` paths the HUD no longer reads, e.g. `memory/` → `memories/`, root `jobs.json` → `cron/jobs.json`) and *Agent schema version* (compares the live `state.db` schema version against the HUD-verified baseline). Both degrade to `ok` when data is absent and only warn on positively-detected drift, turning silent blank tabs into an actionable warning. Verified against **NasTech Agent v0.17.0** (state.db schema v16); baseline lives in `backend/collectors/health.py` (`VERIFIED_AGENT_VERSION`, `TESTED_SCHEMA_VERSIONS`).
+---
+
+## [0.18.0] — 2026-06-29
+
+### Changed
+- **Rebrand: Hermes HUD → NasTech HUD** — full removal of all Hermes/NousResearch/joeynyc traces. Zero external branding remaining.
+- **Version bump to 0.18.0** — aligns with NasTech Agent v0.18+ ecosystem.
+- **Agent compatibility** — verified against NasTech Agent v0.18.0 (state.db schema v16); baseline lives in `backend/collectors/health.py` (`VERIFIED_AGENT_VERSION`, `TESTED_SCHEMA_VERSIONS`).
+- **All data paths updated** — reads from `~/.nastech/` (not `~/.hermes/`). Chat engine calls `nastech` CLI (not `hermes`).
+
+### Removed
+- All external branding, author references, and third-party repo links.
 
 ---
 

@@ -599,7 +599,7 @@ function RemotePublishPanel() {
           Push published replays to a static host (GitHub Pages). Nothing is uploaded unless you sync.
         </div>
         {([
-          ['repo', 'Repository (owner/name or git URL)', 'joeynyc/nastech-replays'],
+          ['repo', 'Repository (owner/name or git URL)', 'nastech-ai/nastech-replays'],
           ['branch', 'Branch', 'gh-pages'],
           ['base_url', 'Base URL (optional, derived for GitHub Pages)', ''],
         ] as Array<[keyof typeof form, string, string]>).map(([key, label, placeholder]) => (

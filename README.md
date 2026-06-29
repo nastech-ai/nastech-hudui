@@ -1,8 +1,8 @@
 # ☤ NasTech HUD — Web UI
 
-A browser-based consciousness monitor for [NasTech](https://github.com/nousresearch/nastech-agent), the AI agent with persistent memory.
+A browser-based consciousness monitor for [NasTech](https://github.com/nastech-ai/NasTech-Agent), the AI agent with persistent memory.
 
-Same data, same soul, same dashboard that made the [TUI version](https://github.com/joeynyc/nastech-hud) popular — now in your browser.
+Same data, same soul, same dashboard that made the [TUI version](https://github.com/nastech-ai/nastech-hud) popular — now in your browser.
 
 ![Executive Dashboard](assets/dashboard-executive.png)
 
@@ -15,7 +15,7 @@ Same data, same soul, same dashboard that made the [TUI version](https://github.
 ## Quick Start
 
 ```bash
-git clone https://github.com/joeynyc/nastech-hudui.git
+git clone https://github.com/nastech-ai/nastech-hudui.git
 cd nastech-hudui
 ./install.sh
 nastech-hudui
@@ -88,7 +88,7 @@ The top tab bar is responsive: resize the browser and tabs stay reachable throug
 
 ## Relationship to the TUI
 
-This is the browser companion to [nastech-hud](https://github.com/joeynyc/nastech-hud). Both read from the same `~/.nastech/` data directory independently — use either one, or both at the same time.
+This is the browser companion to [nastech-hud](https://github.com/nastech-ai/nastech-hud). Both read from the same `~/.nastech/` data directory independently — use either one, or both at the same time.
 
 The Web UI is fully standalone and adds features the TUI doesn't have: dedicated Memory, Skills, Sessions, Replay, Health, Providers, Gateway, Model, and Plugins tabs; per-model token and cost analytics; gateway managed-tool visibility; actionable diagnostics; command palette; live chat; theme switcher.
 
@@ -106,10 +106,10 @@ MIT — see [LICENSE](LICENSE).
 
 ---
 
-<a href="https://www.star-history.com/?repos=joeynyc%2Fnastech-hudui&type=date&logscale=&legend=top-left">
+<a href="https://www.star-history.com/?repos=nastech-ai%2Fnastech-hudui&type=date&logscale=&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=joeynyc/nastech-hudui&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=nastech-ai/nastech-hudui&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=nastech-ai/nastech-hudui&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=nastech-ai/nastech-hudui&type=date&legend=top-left" />
  </picture>
 </a>

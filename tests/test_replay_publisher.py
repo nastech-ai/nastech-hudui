@@ -55,12 +55,12 @@ def test_remote_settings_default_disabled_and_roundtrip(tmp_path, monkeypatch) -
     assert settings["enabled"] is False
     assert settings["provider"] == "github-pages"
 
-    updated = update_remote_settings({"enabled": True, "repo": "joeynyc/replays", "branch": "main", "base_url": ""})
+    updated = update_remote_settings({"enabled": True, "repo": "nastech-ai/replays", "branch": "main", "base_url": ""})
     assert updated["enabled"] is True
-    assert get_remote_settings()["repo"] == "joeynyc/replays"
+    assert get_remote_settings()["repo"] == "nastech-ai/replays"
 
     status = remote_status()
-    assert status["base_url"] == "https://joeynyc.github.io/replays"
+    assert status["base_url"] == "https://nastech-ai.github.io/replays"
     assert status["settings"]["branch"] == "main"
 
 

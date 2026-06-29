@@ -5,7 +5,7 @@ Thanks for your interest in contributing.
 ## Development Setup
 
 ```bash
-git clone https://github.com/joeynyc/nastech-hudui.git
+git clone https://github.com/nastech-ai/nastech-hudui.git
 cd nastech-hudui
 
 # Create and activate virtual environment
